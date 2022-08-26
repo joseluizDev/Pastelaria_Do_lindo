@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "281322731389",
+    "project_id": "pastelaria-do-lindo",
+    "storage_bucket": "pastelaria-do-lindo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281322731389:android:89f744db07ba159b93be14",
+        "android_client_info": {
+          "package_name": "com.example.pastelaria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2o0dItiOwIGcfpxjh1uPKQWwrpnQbmzg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
