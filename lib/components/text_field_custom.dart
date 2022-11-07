@@ -24,7 +24,9 @@ class TextFieldCustom extends StatelessWidget {
         onChanged: onChanged,
         controller: controller,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
           labelText: label,
         ),
         obscureText: obscure,

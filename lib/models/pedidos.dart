@@ -1,4 +1,5 @@
 import 'package:flutter/src/material/list_tile.dart';
+import 'package:map_fields/map_fields.dart';
 
 class Pedidos {
   final String cliente;
@@ -7,6 +8,7 @@ class Pedidos {
   final List<ProdutoPedido> produtos;
   final int finalizado;
   final List<ProdutoPedido> produtosAdicionais;
+  final String? funcionario;
 
   Pedidos({
     required this.cliente,
@@ -15,6 +17,7 @@ class Pedidos {
     required this.produtos,
     required this.finalizado,
     required this.produtosAdicionais,
+    this.funcionario,
   });
 
   double get total =>
@@ -24,10 +27,13 @@ class Pedidos {
 
   factory Pedidos.fromJson(Map<String, dynamic> json) {
     final data = DateTime.parse(json['data'] as String);
+
+    final mapFild = MapFields.load(json);
+    final produtos = mapFild.getList<ProdutoPedido>('produtos');
     return Pedidos(
-      cliente: json['cliente'] as String,
+      cliente: mapFild.getString('cliente'),
       data: data.isUtc ? data.toLocal() : data,
-      mesa: json['mesa'] as String,
+      mesa: mapFild.getString('mesa'),
       produtosAdicionais: (json['produtosAdicionais'] as List<dynamic>)
           .map((produto) =>
               ProdutoPedido.fromJson(produto as Map<String, dynamic>))
@@ -37,6 +43,7 @@ class Pedidos {
               ProdutoPedido.fromJson(produto as Map<String, dynamic>))
           .toList(),
       finalizado: json['finalizado'] as int,
+      funcionario: mapFild.getStringNullable('funcionario'),
     );
   }
 
@@ -48,6 +55,7 @@ class Pedidos {
       'produtos': produtos.map((p) => p.toJson()).toList(),
       'finalizado': finalizado,
       'produtosAdicionais': produtosAdicionais.map((p) => p.toJson()).toList(),
+      'funcionario': funcionario,
     };
   }
 
@@ -56,6 +64,7 @@ class Pedidos {
       'finalizado': finalizado,
       'produtos': produtos.map((p) => p.toJson()).toList(),
       'produtosAdicionais': produtosAdicionais.map((p) => p.toJson()).toList(),
+      'funcionario': funcionario,
     };
   }
 }
@@ -86,7 +95,6 @@ class ProdutoPedido {
       'nome': nome,
       'qtde': qtde,
       'unitario': unitario,
-      
     };
   }
 

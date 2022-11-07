@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pastelaria">
+   
    <application
         android:label="pastelaria"
         android:name="${applicationName}"

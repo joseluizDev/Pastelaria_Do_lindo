@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '281322731389',
     projectId: 'pastelaria-do-lindo',
     authDomain: 'pastelaria-do-lindo.firebaseapp.com',
+    databaseURL: 'https://pastelaria-do-lindo-default-rtdb.firebaseio.com',
     storageBucket: 'pastelaria-do-lindo.appspot.com',
   );
 
@@ -57,6 +61,7 @@ class DefaultFirebaseOptions {
     appId: '1:281322731389:android:89f744db07ba159b93be14',
     messagingSenderId: '281322731389',
     projectId: 'pastelaria-do-lindo',
+    databaseURL: 'https://pastelaria-do-lindo-default-rtdb.firebaseio.com',
     storageBucket: 'pastelaria-do-lindo.appspot.com',
   );
 
@@ -65,17 +70,7 @@ class DefaultFirebaseOptions {
     appId: '1:281322731389:ios:2ea53d2c56a21c8893be14',
     messagingSenderId: '281322731389',
     projectId: 'pastelaria-do-lindo',
-    storageBucket: 'pastelaria-do-lindo.appspot.com',
-    iosClientId:
-        '281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com',
-    iosBundleId: 'com.example.pastelaria',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD1-jcplV1d_1gePn2PdjX_fS8t84mXPhI',
-    appId: '1:281322731389:ios:2ea53d2c56a21c8893be14',
-    messagingSenderId: '281322731389',
-    projectId: 'pastelaria-do-lindo',
+    databaseURL: 'https://pastelaria-do-lindo-default-rtdb.firebaseio.com',
     storageBucket: 'pastelaria-do-lindo.appspot.com',
     iosClientId:
         '281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com',

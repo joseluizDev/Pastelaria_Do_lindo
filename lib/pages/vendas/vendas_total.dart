@@ -84,8 +84,16 @@ class _VendasTotalState extends State<VendasTotal> {
                               child: ListTile(
                                 title: Text(pedido.cliente.isEmpty
                                     ? 'Nenhuma informação'
-                                    : pedido.cliente),
-                                subtitle: Text(pedido.data.dataFormatted),
+                                    : 'Cliente: ${pedido.cliente}'),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'Horario: ${pedido.data.dataFormatted}'),
+                                    Text(
+                                        "Funcionario: ${pedido.funcionario ?? 'Não informado'}"),
+                                  ],
+                                ),
                                 trailing: Text(pedido.total.formatted),
                               ),
                             ),

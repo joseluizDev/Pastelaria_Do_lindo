@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "281322731389",
+    "firebase_url": "https://pastelaria-do-lindo-default-rtdb.firebaseio.com",
     "project_id": "pastelaria-do-lindo",
     "storage_bucket": "pastelaria-do-lindo.appspot.com"
   },
@@ -29,6 +30,13 @@
             {
               "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pastelaria"
+              }
             }
           ]
         }

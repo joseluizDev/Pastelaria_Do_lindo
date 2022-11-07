@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pastelaria/utils/extensions.dart';
 
 import '../../models/pedidos.dart';
 
@@ -32,6 +31,7 @@ class PedidosWeb extends StatelessWidget {
             );
           }
           return Wrap(
+            direction: Axis.horizontal,
             children: List.generate(
               pedidos.length,
               (index) {
@@ -46,12 +46,14 @@ class PedidosWeb extends StatelessWidget {
                 titleList.removeWhere((t) => t.trim().isEmpty);
                 String title = titleList.join(' - ');
                 title = title.trim().isEmpty ? 'Sem título' : title;
-                title += '\nPedido: ${pedido.data.hourFormatted}';
                 final isPar = index % 2 == 0;
                 return SizedBox(
-                  width: MediaQuery.of(context).size.width / 2.8,
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.height,
                   child: Card(
-                    color: isPar ? Colors.orange[200] : Colors.blue[200],
+                    color: isPar
+                        ? const Color.fromARGB(255, 255, 232, 199)
+                        : const Color.fromARGB(255, 190, 226, 255),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
@@ -64,7 +66,15 @@ class PedidosWeb extends StatelessWidget {
                           Text(
                             title,
                             style: const TextStyle(
-                              fontSize: 35,
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            "Funcionario: ${pedido.funcionario}",
+                            style: const TextStyle(
+                              fontSize: 40,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),

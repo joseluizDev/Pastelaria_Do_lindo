@@ -21,6 +21,7 @@ class UsuarioEditAdd extends StatefulWidget {
 class _UsuarioEditAddState extends State<UsuarioEditAdd> {
   final loginController = TextEditingController();
   final senhaController = TextEditingController();
+  final nomeController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _UsuarioEditAddState extends State<UsuarioEditAdd> {
     if (widget.id != null) {
       loginController.text = widget.user?.user ?? '';
       senhaController.text = widget.user?.pass ?? '';
+      nomeController.text = widget.user?.nome ?? '';
     }
   }
 
@@ -39,6 +41,10 @@ class _UsuarioEditAddState extends State<UsuarioEditAdd> {
       ),
       body: Column(
         children: [
+          TextFieldCustom(
+            label: 'nome',
+            controller: nomeController,
+          ),
           const SizedBox(height: 8),
           TextFieldCustom(
             label: 'Usuário',
@@ -57,6 +63,7 @@ class _UsuarioEditAddState extends State<UsuarioEditAdd> {
             user: loginController.text,
             pass: senhaController.text,
             admin: false,
+            nome: nomeController.text,
           );
           if (widget.id == null) {
             await FirebaseFirestore.instance

@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
 import '../../global/login_data.dart';
 import '../../models/pedidos.dart';
-
 import 'adicionar_pedido_page.dart';
 
 class PedidosPage extends StatefulWidget {
@@ -25,6 +24,7 @@ class _PedidosPageState extends State<PedidosPage> {
   }
 
   List<Pedidos> pedidosFiltrados = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,6 +87,7 @@ class _PedidosPageState extends State<PedidosPage> {
                     child: CircularProgressIndicator(),
                   );
                 }
+
                 List pedidos = (snapshot.data?.docs ?? [])
                     .where(
                       (p) =>
@@ -95,11 +96,12 @@ class _PedidosPageState extends State<PedidosPage> {
                     )
                     .where(
                       (p) =>
-                          LoginData().isAdmin ||
+                          LoginData().getUsuario().admin ||
                           DateTime.parse(p.data()['data']).isAfter(
                               DateTime.now().subtract(const Duration(days: 1))),
                     )
                     .toList();
+
                 if (pedidos.isEmpty) {
                   return Center(
                     child: Text(
@@ -112,13 +114,17 @@ class _PedidosPageState extends State<PedidosPage> {
                 if (finalizados) {
                   pedidos = pedidos.reversed.toList();
                 }
-
+                // // se tiver pedidos em finalizados tocar o beep
+                // if (finalizados && pedidosFiltrados.isEmpty) {
+                //   FlutterBeep.beep();
+                // }
                 return ListView.builder(
                   itemCount: pedidos.length,
                   itemBuilder: (_, index) {
                     final pedidoData = pedidos[index];
                     final pedido = Pedidos.fromJson(pedidoData.data());
 
+                    pedido.finalizado == 0 ? FlutterBeep.beep() : null;
                     return GestureDetector(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -142,6 +148,8 @@ class _PedidosPageState extends State<PedidosPage> {
                                     'Mesa: ${pedido.mesa}',
                                   ),
                                 ),
+                                Text(
+                                    'Funcionário: ${pedido.funcionario ?? 'Não informado'}'),
                               ],
                             ),
                             trailing: Visibility(

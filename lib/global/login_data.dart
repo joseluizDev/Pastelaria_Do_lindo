@@ -5,13 +5,13 @@ class LoginData {
   static final _instance = LoginData._();
   factory LoginData() => _instance;
 
-  Usuarios? _user;
+  Usuarios? usuario;
 
-  Usuarios get user => _user!;
+  void setUsuario(Usuarios usuario) {
+    this.usuario = usuario;
+  }
 
-  bool get logged => _user != null;
-
-  bool get isAdmin => _user?.admin ?? false;
-
-  void setUser(Usuarios user) => _user = user;
+  Usuarios getUsuario() {
+    return usuario!;
+  }
 }

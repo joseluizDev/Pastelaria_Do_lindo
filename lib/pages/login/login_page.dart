@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/text_field_custom.dart';
 import '../../global/login_data.dart';
+import '../../models/usuarios.dart';
 import '../../utils/shared_preferences.dart';
 import '../admin/home_admin.dart';
 import '../pedidos/pedidos_page.dart';
@@ -16,8 +18,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final loginController = TextEditingController();
   final senhaController = TextEditingController();
-
-  Future<void> login() async {}
+  Future<void> login() async {
+    final usuariosRef = await FirebaseFirestore.instance
+        .collection('usuarios')
+        .where('user', isEqualTo: loginController.text)
+        .where('pass', isEqualTo: senhaController.text)
+        .get();
+    if (usuariosRef.docs.isNotEmpty) {
+      final userData = usuariosRef.docs.first.data();
+      final user = Usuarios.fromJson(userData);
+      LoginData().setUsuario(user);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +39,11 @@ class _LoginPageState extends State<LoginPage> {
       Future.delayed(const Duration(seconds: 1), () {
         login().then(
           (value) {
-            if (LoginData().logged) {
+            if (LoginData().getUsuario().user != null) {
               gravarisLogged(loginController.text, senhaController.text);
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (_) => LoginData().isAdmin
+                    builder: (_) => LoginData().getUsuario().admin
                         ? const HomeAdmin()
                         : const PedidosPage(),
                   ),
@@ -60,11 +72,11 @@ class _LoginPageState extends State<LoginPage> {
                 obscure: true,
                 controller: senhaController,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               ElevatedButton(
                 child: const SizedBox(
                   height: 50,
-                  width: 120,
+                  width: 200,
                   child: Center(
                     child: Text('Login'),
                   ),
@@ -72,12 +84,12 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   login().then(
                     (value) {
-                      if (LoginData().logged) {
+                      if (LoginData().getUsuario().user != null) {
                         gravarisLogged(
                             loginController.text, senhaController.text);
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                              builder: (_) => LoginData().isAdmin
+                              builder: (_) => LoginData().getUsuario().admin
                                   ? const HomeAdmin()
                                   : const PedidosPage(),
                             ),

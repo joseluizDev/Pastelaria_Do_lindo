@@ -1,18 +1,26 @@
+import 'package:map_fields/map_fields.dart';
+
 class Usuarios {
   final String user;
   final String pass;
   final bool admin;
+  final String? nome;
   Usuarios({
     required this.user,
     required this.pass,
     required this.admin,
+    this.nome,
   });
 
   factory Usuarios.fromJson(Map<String, dynamic> json) {
+    final mapFields = MapFields.load(json);
     return Usuarios(
-      user: json['user'] as String,
-      pass: json['pass'] as String,
-      admin: json['admin'] as bool,
+      user: mapFields.getString('user'),
+      pass: mapFields.getString('pass'),
+      admin: mapFields.getBool('admin'),
+      nome: mapFields.getString(
+        'nome',
+      ),
     );
   }
 
@@ -21,6 +29,7 @@ class Usuarios {
       'user': user,
       'pass': pass,
       'admin': admin,
+      'nome': nome,
     };
   }
 }

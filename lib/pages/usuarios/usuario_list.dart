@@ -38,7 +38,14 @@ class UsuarioList extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Card(
                   child: ListTile(
-                    title: Text(usuario.user),
+                    title: Text("Nome:${usuario.nome}"),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Login: ${usuario.user}'),
+                        Text('Senha: ${usuario.pass}'),
+                      ],
+                    ),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:pastelaria/components/text_field_custom.dart';
+import 'package:pastelaria/global/login_data.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
 import '../../models/pedidos.dart';
@@ -336,6 +336,8 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                 produtos: produtos,
                                 finalizado: 0,
                                 produtosAdicionais: [],
+                                funcionario: LoginData().getUsuario().nome ??
+                                    'Não informado',
                               );
                               final data = pedido.toJson();
 
@@ -362,12 +364,15 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                       ))
                                   .toList();
                               final pedidoadicionais = Pedidos(
-                                  mesa: mesaController.text,
-                                  data: DateTime.now(),
-                                  cliente: clienteController.text,
-                                  produtos: produtosadicionaislist,
-                                  finalizado: 0,
-                                  produtosAdicionais: produtos);
+                                mesa: mesaController.text,
+                                data: DateTime.now(),
+                                cliente: clienteController.text,
+                                produtos: produtosadicionaislist,
+                                finalizado: 0,
+                                produtosAdicionais: produtos,
+                                funcionario: LoginData().getUsuario().nome ??
+                                    'Não informado',
+                              );
 
                               final data2 = pedidoadicionais.toJsonadd();
                               FirebaseFirestore.instance
@@ -382,12 +387,15 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                               );
                             } else {
                               final pedido = Pedidos(
-                                  mesa: mesaController.text,
-                                  data: DateTime.now(),
-                                  cliente: clienteController.text,
-                                  produtos: produtos,
-                                  finalizado: 0,
-                                  produtosAdicionais: []);
+                                mesa: mesaController.text,
+                                data: DateTime.now(),
+                                cliente: clienteController.text,
+                                produtos: produtos,
+                                finalizado: 0,
+                                produtosAdicionais: [],
+                                funcionario: LoginData().getUsuario().nome ??
+                                    'Não informado',
+                              );
                               final data = pedido.toJson();
                               FirebaseFirestore.instance
                                   .collection('pedidos')

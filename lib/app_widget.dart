@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pastelaria/pages/login/login_page.dart';
+import 'package:pastelaria/pages/pedidos/pedidos_web.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -7,7 +7,10 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const LoginPage(),
+      debugShowCheckedModeBanner: false,
+      //home: const SplashPage(),
+      home: const PedidosWeb(),
+
       theme: ThemeData(
         primarySwatch: Colors.orange,
         useMaterial3: true,
