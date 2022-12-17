@@ -13,16 +13,61 @@ class VendasTotal extends StatefulWidget {
 
 class _VendasTotalState extends State<VendasTotal> {
   DateTime inicio = DateTime.now().start;
+
   DateTime fim = DateTime.now().end;
+  String? pesquisaText;
+  TextEditingController pesquisaController = TextEditingController();
+  bool isPesquisa = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vendas Total'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                pesquisaController.clear();
+                isPesquisa = !isPesquisa;
+              });
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
       ),
       body: Column(
         children: [
+          if (isPesquisa)
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, right: 10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: pesquisaController,
+                      onChanged: (value) {
+                        setState(() {
+                          pesquisaText = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Pesquisar',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        pesquisaController.clear();
+                        pesquisaText = null;
+                      });
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
+                ],
+              ),
+            ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -50,8 +95,10 @@ class _VendasTotalState extends State<VendasTotal> {
           const Divider(),
           Expanded(
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream:
-                  FirebaseFirestore.instance.collection('pedidos').snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('pedidos')
+                  .orderBy('data', descending: true)
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Center(child: Text('Erro ao carregar vendas'));
@@ -70,6 +117,14 @@ class _VendasTotalState extends State<VendasTotal> {
                     .toList();
                 final total = vendasFiltradas.fold<double>(
                     0.0, (total, e) => total + e.total);
+                //pesauisa
+                if (pesquisaText != null && pesquisaText!.isNotEmpty) {
+                  final pesquisa = pesquisaText!.toLowerCase();
+                  vendasFiltradas.retainWhere((element) =>
+                      element.cliente.toLowerCase().contains(pesquisa) ||
+                      element.cliente.toLowerCase().contains(pesquisa));
+                }
+
                 return Column(
                   children: [
                     Expanded(
@@ -81,7 +136,7 @@ class _VendasTotalState extends State<VendasTotal> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Card(
-                              child: ListTile(
+                              child: ExpansionTile(
                                 title: Text(pedido.cliente.isEmpty
                                     ? 'Nenhuma informação'
                                     : 'Cliente: ${pedido.cliente}'),
@@ -91,10 +146,32 @@ class _VendasTotalState extends State<VendasTotal> {
                                     Text(
                                         'Horario: ${pedido.data.dataFormatted}'),
                                     Text(
-                                        "Funcionario: ${pedido.funcionario ?? 'Não informado'}"),
+                                        'Pagemento: ${pedido.tipopagamento?.index == 0 ? 'Não definido' : pedido.tipopagamento?.index == 1 ? 'Dinheiro' : pedido.tipopagamento?.index == 2 ? 'Cartão' : 'Pix'}'),
+                                    Text(
+                                        'Tipo: ${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}'),
+                                    Text(
+                                        'Funcionario: ${pedido.funcionario ?? 'Não informado'}'),
                                   ],
                                 ),
                                 trailing: Text(pedido.total.formatted),
+                                children: [
+                                  Column(
+                                    children: [
+                                      for (final item in (pedido.produtos +
+                                          pedido.produtosAdicionais))
+                                        ListTile(
+                                          title: Text(item.nome),
+                                          trailing:
+                                              Text('X ${item.qtde.toInt()}'),
+                                        ),
+                                      ListTile(
+                                        title: const Text('Total'),
+                                        trailing: Text(
+                                            'R\$ ${pedido.total.toStringAsFixed(2)}'),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           );

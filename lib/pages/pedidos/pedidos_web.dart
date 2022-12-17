@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grouped_list/grouped_list.dart';
 
 import '../../models/pedidos.dart';
 
@@ -47,83 +48,156 @@ class PedidosWeb extends StatelessWidget {
                 String title = titleList.join(' - ');
                 title = title.trim().isEmpty ? 'Sem título' : title;
                 final isPar = index % 2 == 0;
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.height,
-                  child: Card(
-                    color: isPar
-                        ? const Color.fromARGB(255, 255, 232, 199)
-                        : const Color.fromARGB(255, 190, 226, 255),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          Text(
-                            "Funcionario: ${pedido.funcionario}",
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          if (pedido.produtosAdicionais.isNotEmpty)
-                            Text(
-                              List.generate(
-                                pedido.produtosAdicionais.length,
-                                (i) {
-                                  final pro = pedido.produtosAdicionais[i];
-                                  return '${pro.qtde} x ${pro.nome}\n';
-                                },
-                              ).fold<String>(
-                                '',
-                                (previousValue, element) =>
-                                    '$previousValue$element',
+                return GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Pedido ${pedido.cliente}'),
+                          content: Text('Mesa: ${pedido.mesa}'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Não finalizar',
+                                style: TextStyle(color: Colors.red),
                               ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('pedidos')
+                                    .doc(pedidoData.id)
+                                    .update(
+                                  {'finalizado': 1},
+                                );
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Finalizar',
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: MediaQuery.of(context).size.height,
+                    child: Card(
+                      color: isPar
+                          ? const Color.fromARGB(255, 255, 242, 224)
+                          : const Color.fromARGB(255, 190, 226, 255),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              title,
                               style: const TextStyle(
-                                fontSize: 30,
+                                fontSize: 40,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
                             ),
-                          const Divider(),
-                          Text(
-                            List.generate(
-                              pedido.produtos.length,
-                              (i) {
-                                final pro = pedido.produtos[i];
-                                return '${pro.qtde} x ${pro.nome}\n';
-                              },
-                            ).fold<String>(
-                              '',
-                              (previousValue, element) =>
-                                  '$previousValue$element',
+                            Text(
+                              "Funcionario: ${pedido.funcionario}",
+                              style: const TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
                             ),
-                            style: TextStyle(
-                              decoration: pedido.produtosAdicionais.isNotEmpty
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                              fontSize: 30,
-                              decorationStyle: TextDecorationStyle.solid,
-                              fontWeight: FontWeight.bold,
-                              color: pedido.produtosAdicionais.isNotEmpty
-                                  ? Colors.grey[800]
-                                  : Colors.black87,
+                            Text(
+                              "Pedido: ${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}",
+                              style: const TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
                             ),
-                          ),
-                        ],
+                            // Text(
+                            //   "Tipo: ${pedido.tipopedido?.name == '' ? 'Não definido' : pedido.tipopedido!.name == 'delivery' ? 'Delivery' : 'Local'}",
+                            //   style: const TextStyle(
+                            //     fontSize: 40,
+                            //     fontWeight: FontWeight.bold,
+                            //     color: Colors.black87,
+                            //   ),
+                            // ),
+                            if (pedido.produtosAdicionais.isNotEmpty) ...[
+                              const Divider(),
+                              GroupedListView<dynamic, String>(
+                                elements: pedido.produtosAdicionais,
+                                shrinkWrap: true,
+                                groupBy: (element) => element.tipo,
+                                groupSeparatorBuilder: (String tipo) => Text(
+                                  tipo,
+                                  style: const TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                itemBuilder: (context, element) => Text(
+                                  '${element.qtde} x ${element.nome}',
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                order: GroupedListOrder.ASC,
+                              ),
+                            ],
+                            const Divider(),
+                            GroupedListView<dynamic, String>(
+                              elements: pedido.produtos,
+                              shrinkWrap: true,
+                              groupBy: (element) =>
+                                  element?.tipo ?? 'Sem categoria',
+                              groupSeparatorBuilder: (String tipo) => Text(
+                                tipo,
+                                style: const TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              itemBuilder: (context, element) => Row(
+                                children: [
+                                  Text(
+                                    '${pedido.produtos.indexOf(element) + 1} x ${element.nome}',
+                                    style: TextStyle(
+                                      decoration:
+                                          pedido.produtosAdicionais.isNotEmpty
+                                              ? TextDecoration.lineThrough
+                                              : null,
+                                      fontSize: 30,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          pedido.produtosAdicionais.isNotEmpty
+                                              ? Colors.grey[800]
+                                              : Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              order: GroupedListOrder.ASC,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

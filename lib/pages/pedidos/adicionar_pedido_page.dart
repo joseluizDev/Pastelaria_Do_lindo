@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -5,6 +8,8 @@ import 'package:pastelaria/components/text_field_custom.dart';
 import 'package:pastelaria/global/login_data.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
+import '../../models/enum_categoria.dart';
+import '../../models/enum_pagamento.dart';
 import '../../models/pedidos.dart';
 import '../../models/produtos.dart';
 
@@ -23,10 +28,12 @@ class AdicionarPedidoPage extends StatefulWidget {
 
 class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
   List<Produto> produtosPedido = [];
+  TipoPedido tipoPedido = TipoPedido.naoDefinido;
+  TipoPagamento tipoPagamento = TipoPagamento.naoDefinido;
   List<Produto> unirProdutos = [];
   final mesaController = TextEditingController();
   final clienteController = TextEditingController();
-
+  bool isloading = false;
   @override
   void initState() {
     _init();
@@ -61,9 +68,11 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
     if (widget.addnovo == true) {
       mesaController.text = widget.pedido!.mesa;
       clienteController.text = widget.pedido!.cliente;
+      tipoPedido = widget.pedido!.tipopedido!;
     } else if (widget.pedido != null) {
       mesaController.text = widget.pedido!.mesa;
       clienteController.text = widget.pedido!.cliente;
+      tipoPedido = widget.pedido!.tipopedido!;
       for (var produto in widget.pedido!.produtos) {
         for (var i = 1; i <= (produto.qtde.toInt()); i++) {
           produtosPedido.add(Produto(
@@ -94,6 +103,97 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
           TextFieldCustom(
             label: 'Cliente',
             controller: clienteController,
+          ),
+          //DropdownButton tipoPedido
+          Row(
+            children: [
+              Container(
+                height: 60,
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                width: MediaQuery.of(context).size.width / 2.40,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<TipoPedido>(
+                    value: tipoPedido,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (TipoPedido? newValue) {
+                      setState(() {
+                        tipoPedido = newValue!;
+                      });
+                    },
+                    items: TipoPedido.values.map<DropdownMenuItem<TipoPedido>>(
+                      (TipoPedido value) {
+                        return DropdownMenuItem<TipoPedido>(
+                          value: value,
+                          child: Text(
+                            value.name == 'naoDefinido'
+                                ? '   Tipo de Pedido'
+                                : value.name == 'delivery'
+                                    ? '   Delivery'
+                                    : '   Local',
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
+                ),
+              ),
+              Container(
+                height: 60,
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                width: MediaQuery.of(context).size.width / 2.40,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<TipoPagamento>(
+                    value: tipoPagamento,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    isExpanded: true,
+                    onChanged: (TipoPagamento? newValue) {
+                      setState(() {
+                        tipoPagamento = newValue!;
+                      });
+                    },
+                    items: TipoPagamento.values
+                        .map<DropdownMenuItem<TipoPagamento>>(
+                      (TipoPagamento value) {
+                        return DropdownMenuItem<TipoPagamento>(
+                          value: value,
+                          child: Text(
+                            value.name == 'naoDefinido'
+                                ? '  Tipo de Pagamento'
+                                : value.name == 'dinherio'
+                                    ? '   Dinheiro'
+                                    : value.name == 'cartao'
+                                        ? '   Cartão'
+                                        : '   Pix',
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
+                ),
+              ),
+            ],
           ),
           const Divider(height: 18),
           Expanded(
@@ -274,6 +374,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
             ? null
             : () {
                 bool valuevolt = false;
+
                 showDialog(
                   context: context,
                   builder: (BuildContext cxt) {
@@ -314,100 +415,129 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                       ),
                       actions: <Widget>[
                         ElevatedButton(
+                          onPressed: isloading
+                              ? null
+                              : () async {
+                                  final unique =
+                                      produtosPedido.toSet().toList();
+                                  final produtos = unique
+                                      .map(
+                                        (p) => ProdutoPedido(
+                                          nome: p.nome,
+                                          qtde: double.parse(produtosPedido
+                                              .where((p2) => p2 == p)
+                                              .length
+                                              .toString()),
+                                          unitario: p.unitario,
+                                          tipo: p.tipo ?? '',
+                                        ),
+                                      )
+                                      .toList();
+
+                                  if (widget.addnovo == false) {
+                                    final pedido = Pedidos(
+                                      mesa: mesaController.text,
+                                      data: widget.pedido!.data,
+                                      cliente: clienteController.text,
+                                      tipopedido: tipoPedido,
+                                      tipopagamento: tipoPagamento,
+                                      produtos: produtos,
+                                      finalizado: 0,
+                                      produtosAdicionais: [],
+                                      funcionario:
+                                          LoginData().getUsuario().nome ??
+                                              'Não informado',
+                                      numeroPedido: widget.pedido!.numeroPedido,
+                                    );
+                                    final data = pedido.toJson();
+                                    FirebaseFirestore.instance
+                                        .collection('pedidos')
+                                        .doc(widget.pedidoData!.id)
+                                        .update(data)
+                                        .then(
+                                      (doc) {
+                                        valuevolt = true;
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  } else if (widget.addnovo == true) {
+                                    final unir = unirProdutos.toSet().toList();
+                                    final produtosadicionaislist = unir
+                                        .map((p) => ProdutoPedido(
+                                              nome: p.nome,
+                                              qtde: double.parse(unirProdutos
+                                                  .where((p2) => p2 == p)
+                                                  .length
+                                                  .toString()),
+                                              unitario: p.unitario,
+                                              tipo: p.tipo ?? '',
+                                            ))
+                                        .toList();
+                                    final pedidoadicionais = Pedidos(
+                                      mesa: mesaController.text,
+                                      data: DateTime.now(),
+                                      cliente: clienteController.text,
+                                      produtos: produtosadicionaislist,
+                                      tipopedido: tipoPedido,
+                                      tipopagamento: tipoPagamento,
+                                      finalizado: 0,
+                                      produtosAdicionais: produtos,
+                                      funcionario:
+                                          LoginData().getUsuario().nome ??
+                                              'Não informado',
+                                      numeroPedido:
+                                          widget.pedidoData!.numeroPedido,
+                                    );
+
+                                    final data2 = pedidoadicionais.toJsonadd();
+                                    FirebaseFirestore.instance
+                                        .collection('pedidos')
+                                        .doc(widget.pedidoData!.id)
+                                        .update(data2)
+                                        .then(
+                                      (doc) {
+                                        valuevolt = true;
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  } else {
+                                    //selecionar um numero aleatorio entre 100 e 999
+                                    //selecionar um numero aleatorio entre 100 e 999
+                                    final int numeroAl =
+                                        Random().nextInt(900) + 100;
+                                    // pegar somente o dia atual
+                                    final datatime = DateTime.now();
+                                    final ordemPedido = numeroAl.toString() +
+                                        datatime.day.toString() +
+                                        datatime.month.toString();
+
+                                    final pedido = Pedidos(
+                                      mesa: mesaController.text,
+                                      data: DateTime.now(),
+                                      cliente: clienteController.text,
+                                      tipopedido: tipoPedido,
+                                      tipopagamento: tipoPagamento,
+                                      produtos: produtos,
+                                      finalizado: 0,
+                                      produtosAdicionais: [],
+                                      funcionario:
+                                          LoginData().getUsuario().nome ??
+                                              'Não informado',
+                                      numeroPedido: ordemPedido,
+                                    );
+                                    final data = pedido.toJson();
+                                    await FirebaseFirestore.instance
+                                        .collection('pedidos')
+                                        .add(data)
+                                        .then(
+                                      (doc) {
+                                        valuevolt = true;
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  }
+                                },
                           child: const Text("Salvar Pedido"),
-                          onPressed: () {
-                            final unique = produtosPedido.toSet().toList();
-                            final produtos = unique
-                                .map((p) => ProdutoPedido(
-                                      nome: p.nome,
-                                      qtde: double.parse(produtosPedido
-                                          .where((p2) => p2 == p)
-                                          .length
-                                          .toString()),
-                                      unitario: p.unitario,
-                                    ))
-                                .toList();
-
-                            if (widget.addnovo == false) {
-                              final pedido = Pedidos(
-                                mesa: mesaController.text,
-                                data: widget.pedido!.data,
-                                cliente: clienteController.text,
-                                produtos: produtos,
-                                finalizado: 0,
-                                produtosAdicionais: [],
-                                funcionario: LoginData().getUsuario().nome ??
-                                    'Não informado',
-                              );
-                              final data = pedido.toJson();
-
-                              FirebaseFirestore.instance
-                                  .collection('pedidos')
-                                  .doc(widget.pedidoData!.id)
-                                  .update(data)
-                                  .then(
-                                (doc) {
-                                  valuevolt = true;
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            } else if (widget.addnovo == true) {
-                              final unir = unirProdutos.toSet().toList();
-                              final produtosadicionaislist = unir
-                                  .map((p) => ProdutoPedido(
-                                        nome: p.nome,
-                                        qtde: double.parse(unirProdutos
-                                            .where((p2) => p2 == p)
-                                            .length
-                                            .toString()),
-                                        unitario: p.unitario,
-                                      ))
-                                  .toList();
-                              final pedidoadicionais = Pedidos(
-                                mesa: mesaController.text,
-                                data: DateTime.now(),
-                                cliente: clienteController.text,
-                                produtos: produtosadicionaislist,
-                                finalizado: 0,
-                                produtosAdicionais: produtos,
-                                funcionario: LoginData().getUsuario().nome ??
-                                    'Não informado',
-                              );
-
-                              final data2 = pedidoadicionais.toJsonadd();
-                              FirebaseFirestore.instance
-                                  .collection('pedidos')
-                                  .doc(widget.pedidoData!.id)
-                                  .update(data2)
-                                  .then(
-                                (doc) {
-                                  valuevolt = true;
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            } else {
-                              final pedido = Pedidos(
-                                mesa: mesaController.text,
-                                data: DateTime.now(),
-                                cliente: clienteController.text,
-                                produtos: produtos,
-                                finalizado: 0,
-                                produtosAdicionais: [],
-                                funcionario: LoginData().getUsuario().nome ??
-                                    'Não informado',
-                              );
-                              final data = pedido.toJson();
-                              FirebaseFirestore.instance
-                                  .collection('pedidos')
-                                  .add(data)
-                                  .then(
-                                (doc) {
-                                  valuevolt = true;
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            }
-                          },
                         ),
                         ElevatedButton(
                             onPressed: () {
@@ -417,16 +547,18 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                       ],
                     );
                   },
-                ).then((value) {
-                  if (valuevolt) {
-                    Future.delayed(
-                      const Duration(milliseconds: 200),
-                      () {
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  }
-                });
+                ).then(
+                  (value) {
+                    if (valuevolt) {
+                      Future.delayed(
+                        const Duration(milliseconds: 200),
+                        () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    }
+                  },
+                );
               },
         label: const Text('Salvar pedido'),
       ),

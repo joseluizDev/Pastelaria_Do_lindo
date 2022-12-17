@@ -27,18 +27,19 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  assets_audio_player: ^3.0.5
   cloud_firestore: ^4.0.4
   cupertino_icons: ^1.0.5
   firebase_core: ^2.1.1
   flutter:
     sdk: flutter
-  grouped_list: ^5.1.2
-  shared_preferences: ^2.0.15
-  uuid: ^3.0.6
-  map_fields: ^0.0.5
   flutter_beep: ^1.0.0
   flutter_sound: ^9.2.13
-  assets_audio_player: ^3.0.5
+  grouped_list: ^5.1.2
+  map_fields: ^0.0.5
+  rive: ^0.9.1
+  shared_preferences: ^2.0.15
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0

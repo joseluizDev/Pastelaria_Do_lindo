@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
 import '../../global/login_data.dart';
+import '../../models/beep.dart';
 import '../../models/pedidos.dart';
 import 'adicionar_pedido_page.dart';
 
@@ -16,6 +19,7 @@ class PedidosPage extends StatefulWidget {
 
 class _PedidosPageState extends State<PedidosPage> {
   bool finalizados = false;
+  StreamController controller = StreamController();
 
   void setFinalizados(bool value) {
     setState(() {
@@ -24,9 +28,31 @@ class _PedidosPageState extends State<PedidosPage> {
   }
 
   List<Pedidos> pedidosFiltrados = [];
+  @override
+  void initState() {
+    verificarBeep();
+    super.initState();
+  }
+
+  void verificarBeep() async {
+    FirebaseFirestore.instance.collection('beep').doc('1').snapshots().listen(
+      (event) {
+        BeepModel beep = BeepModel.fromJson(event.data()!);
+        if (beep.isbeep == true) {
+          FlutterBeep.beep();
+          controller.add('beep');
+          FirebaseFirestore.instance
+              .collection('beep')
+              .doc('1')
+              .update({'beep': false});
+        } else {}
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    // verificarbeep();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pedidos'),
@@ -123,8 +149,6 @@ class _PedidosPageState extends State<PedidosPage> {
                   itemBuilder: (_, index) {
                     final pedidoData = pedidos[index];
                     final pedido = Pedidos.fromJson(pedidoData.data());
-
-                    pedido.finalizado == 0 ? FlutterBeep.beep() : null;
                     return GestureDetector(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -147,6 +171,22 @@ class _PedidosPageState extends State<PedidosPage> {
                                   child: Text(
                                     'Mesa: ${pedido.mesa}',
                                   ),
+                                ),
+                                Text(
+                                  pedido.tipopedido?.index == 0
+                                      ? 'Não definido'
+                                      : pedido.tipopedido?.index == 1
+                                          ? 'Delivery'
+                                          : 'Local',
+                                ),
+                                Text(
+                                  pedido.tipopagamento?.index == 0
+                                      ? 'Não definido'
+                                      : pedido.tipopagamento?.index == 1
+                                          ? 'Dinheiro'
+                                          : pedido.tipopagamento?.index == 2
+                                              ? 'Cartão'
+                                              : 'Pix',
                                 ),
                                 Text(
                                     'Funcionário: ${pedido.funcionario ?? 'Não informado'}'),

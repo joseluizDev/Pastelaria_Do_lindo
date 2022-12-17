@@ -1,5 +1,7 @@
-import 'package:flutter/src/material/list_tile.dart';
+import 'package:flutter/material.dart';
 import 'package:map_fields/map_fields.dart';
+import 'package:pastelaria/models/enum_categoria.dart';
+import 'package:pastelaria/models/enum_pagamento.dart';
 
 class Pedidos {
   final String cliente;
@@ -9,6 +11,9 @@ class Pedidos {
   final int finalizado;
   final List<ProdutoPedido> produtosAdicionais;
   final String? funcionario;
+  final TipoPedido? tipopedido;
+  final TipoPagamento? tipopagamento;
+  final String? numeroPedido;
 
   Pedidos({
     required this.cliente,
@@ -17,6 +22,9 @@ class Pedidos {
     required this.produtos,
     required this.finalizado,
     required this.produtosAdicionais,
+    this.numeroPedido,
+    this.tipopagamento,
+    this.tipopedido,
     this.funcionario,
   });
 
@@ -29,7 +37,7 @@ class Pedidos {
     final data = DateTime.parse(json['data'] as String);
 
     final mapFild = MapFields.load(json);
-    final produtos = mapFild.getList<ProdutoPedido>('produtos');
+
     return Pedidos(
       cliente: mapFild.getString('cliente'),
       data: data.isUtc ? data.toLocal() : data,
@@ -44,6 +52,17 @@ class Pedidos {
           .toList(),
       finalizado: json['finalizado'] as int,
       funcionario: mapFild.getStringNullable('funcionario'),
+      tipopedido: mapFild.getStringNullable('tipopedido') == null
+          ? null
+          : TipoPedido.values.firstWhere(
+              (e) => e.toString() == mapFild.getStringNullable('tipopedido'),
+            ),
+      tipopagamento: mapFild.getStringNullable('tipopagamento') == null
+          ? null
+          : TipoPagamento.values.firstWhere(
+              (e) => e.toString() == mapFild.getStringNullable('tipopagamento'),
+            ),
+      numeroPedido: mapFild.getStringNullable('numeroPedido'),
     );
   }
 
@@ -56,6 +75,9 @@ class Pedidos {
       'finalizado': finalizado,
       'produtosAdicionais': produtosAdicionais.map((p) => p.toJson()).toList(),
       'funcionario': funcionario,
+      'tipopedido': tipopedido.toString(),
+      'tipopagamento': tipopagamento.toString(),
+      'numeroPedido': numeroPedido
     };
   }
 
@@ -73,20 +95,24 @@ class ProdutoPedido {
   final String nome;
   final double qtde;
   final double unitario;
+  final String? tipo;
 
   ProdutoPedido({
     required this.nome,
     required this.qtde,
     required this.unitario,
+    this.tipo,
   });
 
   double get total => qtde * unitario;
 
   factory ProdutoPedido.fromJson(Map<String, dynamic> json) {
+    final MapFields mapFild = MapFields.load(json);
     return ProdutoPedido(
       nome: json['nome'] as String,
       qtde: double.parse(json['qtde'].toString()),
       unitario: double.parse(json['unitario'].toString()),
+      tipo: mapFild.getStringNullable('tipo'),
     );
   }
 
@@ -95,6 +121,7 @@ class ProdutoPedido {
       'nome': nome,
       'qtde': qtde,
       'unitario': unitario,
+      'tipo': tipo,
     };
   }
 
