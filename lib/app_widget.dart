@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pastelaria/pages/splash/splash_page.dart';
+
+import 'pages/splash/splash_page.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -9,10 +10,9 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const SplashPage(),
-      //home: const PedidosWeb(),
-
+      // home: const PedidosWeb(),
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.red,
         useMaterial3: true,
       ),
     );

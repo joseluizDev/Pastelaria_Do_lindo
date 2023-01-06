@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 extension DateTimeExt on DateTime {
   String get formatted {
     return '$dataFormatted $hourFormatted';
@@ -24,8 +26,10 @@ extension DateTimeExt on DateTime {
   }
 }
 
+//formatar valor em reais
 extension DoubleExt on double {
   String get formatted {
-    return 'R\$ ${toStringAsFixed(2).replaceAll('.', ',')}';
+    final formatter = NumberFormat('#,##0.00', 'pt_BR');
+    return 'R\$ ${formatter.format(this)}';
   }
 }

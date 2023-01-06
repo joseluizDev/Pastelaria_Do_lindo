@@ -55,7 +55,24 @@ class PedidosWeb extends StatelessWidget {
                       builder: (context) {
                         return AlertDialog(
                           title: Text('Pedido ${pedido.cliente}'),
-                          content: Text('Mesa: ${pedido.mesa}'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Numero do pedido: ${pedido.numeroPedido}'),
+                              Text(
+                                'Cliente: ${pedido.cliente.isNotEmpty ? pedido.cliente : 'Não definido'}',
+                              ),
+                              Text(
+                                'Mesa: ${pedido.mesa.isNotEmpty ? pedido.mesa : 'Não definida'}',
+                              ),
+                              Text(
+                                  'Pedido:${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}'),
+                              Text(
+                                  'Pagamento:${pedido.tipopagamento?.index == 0 ? 'Não definido' : pedido.tipopagamento?.index == 1 ? 'Dinheiro' : pedido.tipopagamento?.index == 2 ? 'Cartão' : 'Pix'}'),
+                              Text(
+                                  'Funcionário: ${pedido.funcionario ?? 'Não informado'}'),
+                            ],
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -87,7 +104,7 @@ class PedidosWeb extends StatelessWidget {
                     );
                   },
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
+                    width: MediaQuery.of(context).size.width / 4,
                     height: MediaQuery.of(context).size.height,
                     child: Card(
                       color: isPar
@@ -103,7 +120,23 @@ class PedidosWeb extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
+                              "Pedido: ${index + 1}",
+                              style: const TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
                               title,
+                              style: const TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              "Numero Do Pedido: ${pedido.numeroPedido}",
                               style: const TextStyle(
                                 fontSize: 40,
                                 fontWeight: FontWeight.bold,

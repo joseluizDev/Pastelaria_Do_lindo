@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
 import '../../models/produtos.dart';
@@ -27,13 +28,26 @@ class ProdutoList extends StatelessWidget {
           if (produtos.isEmpty) {
             return const Center(child: Text('Nenhum produto encontrado'));
           }
-          return ListView.builder(
-            itemCount: produtos.length + 1,
-            itemBuilder: (_, index) {
-              if (index == produtos.length) {
-                return const SizedBox(height: 80);
-              }
-              final produtoData = produtos[index];
+          return GroupedListView<dynamic, String>(
+            shrinkWrap: true,
+            elements: produtos,
+            groupBy: (element) => element.data()['tipo'],
+            groupComparator: (value1, value2) => value2.compareTo(value1),
+            itemComparator: (item1, item2) =>
+                item1['tipo'].compareTo(item2['tipo']),
+            order: GroupedListOrder.DESC,
+            useStickyGroupSeparators: true,
+            groupSeparatorBuilder: (String value) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                value.toUpperCase(),
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            ),
+            itemBuilder: (c, element) {
+              final produtoData = element;
               final produto = Produto.fromJson(produtoData.data());
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -51,45 +65,49 @@ class ProdutoList extends StatelessWidget {
                       ],
                     ),
                     subtitle: Text(produto.unitario.formatted),
-                    trailing: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Estoque: ${produto.estoque.toStringAsFixed(0)}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        GestureDetector(
-                          child: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
+                    trailing: Container(
+                      alignment: Alignment.centerRight,
+                      width: 140,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Estoque: ${produto.estoque.toStringAsFixed(0)}',
+                            style: const TextStyle(fontSize: 16),
                           ),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (ctx) {
-                                return AlertDialog(
-                                  title: const Text('Remover produto'),
-                                  content:
-                                      const Text('Deseja remover o produto?'),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text('Sim'),
-                                      onPressed: () {
-                                        produtoData.reference.delete();
-                                        Navigator.pop(ctx);
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text('Não'),
-                                      onPressed: () => Navigator.pop(ctx),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
+                          GestureDetector(
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) {
+                                  return AlertDialog(
+                                    title: const Text('Remover produto'),
+                                    content:
+                                        const Text('Deseja remover o produto?'),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('Sim'),
+                                        onPressed: () {
+                                          produtoData.reference.delete();
+                                          Navigator.pop(ctx);
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text('Não'),
+                                        onPressed: () => Navigator.pop(ctx),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     onTap: () {
                       Navigator.of(context).push(

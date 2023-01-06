@@ -1,12 +1,8 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_beep/flutter_beep.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
 import '../../global/login_data.dart';
-import '../../models/beep.dart';
 import '../../models/pedidos.dart';
 import 'adicionar_pedido_page.dart';
 
@@ -19,7 +15,6 @@ class PedidosPage extends StatefulWidget {
 
 class _PedidosPageState extends State<PedidosPage> {
   bool finalizados = false;
-  StreamController controller = StreamController();
 
   void setFinalizados(bool value) {
     setState(() {
@@ -30,24 +25,7 @@ class _PedidosPageState extends State<PedidosPage> {
   List<Pedidos> pedidosFiltrados = [];
   @override
   void initState() {
-    verificarBeep();
     super.initState();
-  }
-
-  void verificarBeep() async {
-    FirebaseFirestore.instance.collection('beep').doc('1').snapshots().listen(
-      (event) {
-        BeepModel beep = BeepModel.fromJson(event.data()!);
-        if (beep.isbeep == true) {
-          FlutterBeep.beep();
-          controller.add('beep');
-          FirebaseFirestore.instance
-              .collection('beep')
-              .doc('1')
-              .update({'beep': false});
-        } else {}
-      },
-    );
   }
 
   @override
@@ -101,6 +79,7 @@ class _PedidosPageState extends State<PedidosPage> {
               stream: FirebaseFirestore.instance
                   .collection('pedidos')
                   .orderBy('data', descending: false)
+                  .where('finalizado', isEqualTo: finalizados ? 1 : 0)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -160,34 +139,18 @@ class _PedidosPageState extends State<PedidosPage> {
                               children: [
                                 Text((pedido.total + pedido.totalAdicionais)
                                     .formatted),
-                                Visibility(
-                                  visible: pedido.cliente.isNotEmpty,
-                                  child: Text(
-                                    'Cliente: ${pedido.cliente}',
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: pedido.mesa.isNotEmpty,
-                                  child: Text(
-                                    'Mesa: ${pedido.mesa}',
-                                  ),
+                                Text(
+                                    'Numero do pedido: ${pedido.numeroPedido}'),
+                                Text(
+                                  'Cliente: ${pedido.cliente.isNotEmpty ? pedido.cliente : 'Não definido'}',
                                 ),
                                 Text(
-                                  pedido.tipopedido?.index == 0
-                                      ? 'Não definido'
-                                      : pedido.tipopedido?.index == 1
-                                          ? 'Delivery'
-                                          : 'Local',
+                                  'Mesa: ${pedido.mesa.isNotEmpty ? pedido.mesa : 'Não definida'}',
                                 ),
                                 Text(
-                                  pedido.tipopagamento?.index == 0
-                                      ? 'Não definido'
-                                      : pedido.tipopagamento?.index == 1
-                                          ? 'Dinheiro'
-                                          : pedido.tipopagamento?.index == 2
-                                              ? 'Cartão'
-                                              : 'Pix',
-                                ),
+                                    'Pedido:${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}'),
+                                Text(
+                                    'Pagamento:${pedido.tipopagamento?.index == 0 ? 'Não definido' : pedido.tipopagamento?.index == 1 ? 'Dinheiro' : pedido.tipopagamento?.index == 2 ? 'Cartão' : 'Pix'}'),
                                 Text(
                                     'Funcionário: ${pedido.funcionario ?? 'Não informado'}'),
                               ],

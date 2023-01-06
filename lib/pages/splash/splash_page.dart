@@ -25,13 +25,14 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 109, 28, 27),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               'assets/icon.png',
-              width: 200,
+              width: 300,
             ),
             const SizedBox(height: 16),
             const CircularProgressIndicator(),

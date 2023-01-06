@@ -61,6 +61,7 @@ class _VendasTotalState extends State<VendasTotal> {
                       setState(() {
                         pesquisaController.clear();
                         pesquisaText = null;
+                        isPesquisa = !isPesquisa;
                       });
                     },
                     icon: const Icon(Icons.clear),
@@ -120,9 +121,15 @@ class _VendasTotalState extends State<VendasTotal> {
                 //pesauisa
                 if (pesquisaText != null && pesquisaText!.isNotEmpty) {
                   final pesquisa = pesquisaText!.toLowerCase();
-                  vendasFiltradas.retainWhere((element) =>
-                      element.cliente.toLowerCase().contains(pesquisa) ||
-                      element.cliente.toLowerCase().contains(pesquisa));
+                  //pesquisa por nome dos vendasFiltradas.produtos
+                  vendasFiltradas.retainWhere((element) {
+                    final cliente = element.cliente.toLowerCase();
+                    final produto = element.produtos
+                        .map((e) => e.nome.toLowerCase())
+                        .join(' ');
+                    return cliente.contains(pesquisa) ||
+                        produto.contains(pesquisa);
+                  });
                 }
 
                 return Column(
@@ -155,22 +162,32 @@ class _VendasTotalState extends State<VendasTotal> {
                                 ),
                                 trailing: Text(pedido.total.formatted),
                                 children: [
-                                  Column(
-                                    children: [
-                                      for (final item in (pedido.produtos +
-                                          pedido.produtosAdicionais))
-                                        ListTile(
-                                          title: Text(item.nome),
-                                          trailing:
-                                              Text('X ${item.qtde.toInt()}'),
-                                        ),
-                                      ListTile(
-                                        title: const Text('Total'),
-                                        trailing: Text(
-                                            'R\$ ${pedido.total.toStringAsFixed(2)}'),
-                                      ),
-                                    ],
-                                  ),
+                                  Builder(builder: (context) {
+                                    // for (final item in (pedido.produtos +
+                                    // pedido.produtosAdicionais))
+                                    final itens = pedido.produtos +
+                                        pedido.produtosAdicionais;
+                                    if (pesquisaText != null &&
+                                        pesquisaText!.isNotEmpty) {
+                                      final pesquisa =
+                                          pesquisaText!.toLowerCase();
+                                      itens.retainWhere((element) {
+                                        final nome = element.nome.toLowerCase();
+                                        return nome.contains(pesquisa);
+                                      });
+                                    }
+                                    return Column(
+                                        children: itens
+                                            .map(
+                                              (e) => ListTile(
+                                                title: Text(e.nome),
+                                                subtitle: Text('X: ${e.qtde}'),
+                                                trailing:
+                                                    Text(e.total.formatted),
+                                              ),
+                                            )
+                                            .toList());
+                                  }),
                                 ],
                               ),
                             ),
@@ -179,13 +196,40 @@ class _VendasTotalState extends State<VendasTotal> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Total: ${total.formatted}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Builder(builder: (context) {
+                      if (pesquisaText != null && pesquisaText!.isNotEmpty) {
+                        //remover os itens que não foram encontrados
+                        vendasFiltradas.retainWhere((element) {
+                          final cliente = element.cliente.toLowerCase();
+                          final produto = element.produtos
+                              .map((e) => e.nome.toLowerCase())
+                              .join(' ');
+                          return cliente.contains(pesquisaText!) ||
+                              produto.contains(pesquisaText!);
+                        });
+                        //remover os produtos que não foram encontrados
+                        for (final pedido in vendasFiltradas) {
+                          pedido.produtos.retainWhere((element) {
+                            final nome = element.nome.toLowerCase();
+                            return nome.contains(pesquisaText!);
+                          });
+                          pedido.produtosAdicionais.retainWhere((element) {
+                            final nome = element.nome.toLowerCase();
+                            return nome.contains(pesquisaText!);
+                          });
+                        }
+
+                        return Text(
+                          'Total: ${vendasFiltradas.fold<double>(0.0, (total, e) => total + e.total).formatted}',
+                          style: Theme.of(context).textTheme.headline6,
+                        );
+                      }
+
+                      return Text(
+                        'Total: ${total.formatted}',
+                        style: Theme.of(context).textTheme.headline6,
+                      );
+                    }),
                   ],
                 );
               },
