@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:intl/intl.dart';
 import 'package:pastelaria/components/text_field_custom.dart';
 import 'package:pastelaria/utils/extensions.dart';
 
@@ -13,6 +12,7 @@ import '../../models/enum_pagamento.dart';
 import '../../models/pedidos.dart';
 import '../../models/produtos.dart';
 import '../../printer/impressora.dart';
+import '../../utils/shared_preferences.dart';
 import 'components/confirmacao_pedido.dart';
 
 // ignore: must_be_immutable
@@ -406,9 +406,9 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
         ),
         onPressed: produtosPedidoComprovante.isEmpty
             ? null
-            : () {
+            : () async {
                 bool valuevolt = false;
-                String numeropedido = numeroPedido();
+                int numeropedido = await contadorShared();
                 showDialog(
                   context: context,
                   builder: (BuildContext cxt) {
@@ -433,7 +433,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                 produtosPedidoComprovante.fold<double>(
                                     0, (total, p) => total + p.unitario),
                                 tipoPagamento.index,
-                                numeropedido,
+                                numeropedido.toString(),
                               );
                             },
                           )
@@ -448,7 +448,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                               0, (total, p) => total + p.unitario),
                           produtos: produtosPedido,
                           pagamento: tipoPagamento,
-                          numeroPedido: numeropedido,
+                          numeroPedido: numeropedido.toString(),
                         ),
                       ),
                       actions: <Widget>[
@@ -479,14 +479,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
 
                                   for (Produto i
                                       in produtosPedidoComprovanteFirebase) {
-                                    // await FirebaseFirestore.instance
-                                    //     .collection('produtos')
-                                    //     .doc(i.id)
-                                    //     .update({
-                                    //   'estoque':
-                                    //       produtosPedidoComprovante.indexOf(i),
-                                    // });
-                                    // 'estoque': FieldValue.increment(-1),
                                     await FirebaseFirestore.instance
                                         .collection('produtos')
                                         .where('nome', isEqualTo: i.nome)
@@ -644,15 +636,5 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
               },
       ),
     );
-  }
-
-  String numeroPedido() {
-    final int numeropedid;
-    numeropedid = Random().nextInt(90) + 10;
-    final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('dd/MM');
-    final String data = formatter.format(now);
-    final String numeroPedido = numeropedid.toString() + data;
-    return numeroPedido.replaceAll('/', '');
   }
 }

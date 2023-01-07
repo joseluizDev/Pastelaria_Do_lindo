@@ -12,3 +12,15 @@ Future<List<String>> lerisLogged() async {
   final password = prefs.getString('password');
   return [login ?? '', password ?? ''];
 }
+
+Future<int> contadorShared() async {
+  final DateTime now = DateTime.now();
+  final String mes = now.month.toString();
+  final String dia = now.day.toString();
+  final String mesDia = mes + dia;
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final contador = prefs.getInt(mesDia) ?? 1;
+  prefs.setInt(mesDia, contador + 1);
+  return contador;
+}
