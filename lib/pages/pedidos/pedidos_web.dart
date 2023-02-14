@@ -104,7 +104,7 @@ class PedidosWeb extends StatelessWidget {
                     );
                   },
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 4,
+                    width: MediaQuery.of(context).size.width / 3,
                     height: MediaQuery.of(context).size.height,
                     child: Card(
                       color: isPar
@@ -116,27 +116,41 @@ class PedidosWeb extends StatelessWidget {
                           vertical: 8.0,
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              "Pedido: ${index + 1}",
-                              style: const TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold,
+                            Container(
+                              decoration: const BoxDecoration(
                                 color: Colors.black87,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  topRight: Radius.circular(8),
+                                ),
+                              ),
+                              width: double.infinity,
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Pedido: ${index + 1}",
+                                  style: const TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
                             Text(
                               title,
                               style: const TextStyle(
-                                fontSize: 40,
+                                fontSize: 38,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
                             ),
                             Text(
-                              "Numero Do Pedido: ${pedido.numeroPedido}",
+                              "Comprovante: ${pedido.numeroPedido}",
                               style: const TextStyle(
                                 fontSize: 40,
                                 fontWeight: FontWeight.bold,
@@ -146,15 +160,15 @@ class PedidosWeb extends StatelessWidget {
                             Text(
                               "Funcionario: ${pedido.funcionario}",
                               style: const TextStyle(
-                                fontSize: 40,
+                                fontSize: 38,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
                             ),
                             Text(
-                              "Pedido: ${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}",
+                              "Tipo: ${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}",
                               style: const TextStyle(
-                                fontSize: 40,
+                                fontSize: 38,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
@@ -173,12 +187,18 @@ class PedidosWeb extends StatelessWidget {
                                 elements: pedido.produtosAdicionais,
                                 shrinkWrap: true,
                                 groupBy: (element) => element.tipo,
-                                groupSeparatorBuilder: (String tipo) => Text(
-                                  tipo,
-                                  style: const TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                groupSeparatorBuilder: (String tipo) =>
+                                    Container(
+                                  width: double.infinity,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    tipo,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 38,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
                                   ),
                                 ),
                                 itemBuilder: (context, element) => Text(
@@ -201,7 +221,7 @@ class PedidosWeb extends StatelessWidget {
                               groupSeparatorBuilder: (String tipo) => Text(
                                 tipo,
                                 style: const TextStyle(
-                                  fontSize: 40,
+                                  fontSize: 38,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
                                 ),

@@ -280,8 +280,10 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                     final produtoData = element;
                     final produto = Produto.fromJson(produtoData.data());
 
-                    final quantidade =
-                        produtosPedido.where((p) => p == produto).length;
+                    final quantidade = produtosPedido
+                        .where((p) =>
+                            p.nome == produto.nome && p.tipo == produto.tipo)
+                        .length;
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Card(
@@ -312,6 +314,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                   child: const Icon(Icons.remove),
                                   onPressed: () {
                                     final i = produtosPedido.indexOf(produto);
+
                                     final j = produtosPedidoComprovante
                                         .indexOf(produto);
                                     setState(() {
@@ -456,6 +459,8 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                           onPressed: isloading
                               ? null
                               : () async {
+                                  int numeropedido =
+                                      await contadorShared(condicao: true);
                                   final unique =
                                       produtosPedido.toSet().toList();
                                   final produtos = unique

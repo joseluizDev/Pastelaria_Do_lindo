@@ -8,6 +8,6 @@
 import 'package:pastelaria/utils/shared_preferences.dart';
 
 void main() async {
-  int conut = await contadorShared();
+  int conut = await contadorShared(condicao: true);
   print(conut);
 }

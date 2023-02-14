@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:map_fields/map_fields.dart';
 import 'package:pastelaria/models/enum_categoria.dart';
 import 'package:pastelaria/models/enum_pagamento.dart';
@@ -124,6 +123,4 @@ class ProdutoPedido {
       'tipo': tipo,
     };
   }
-
-  map(ListTile Function(dynamic p) param0) {}
 }

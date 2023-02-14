@@ -93,10 +93,13 @@ class _ProdutoEditAddState extends State<ProdutoEditAdd> {
             ? null
             : () async {
                 final Produto produto = Produto(
-                    nome: nomeController.text,
-                    unitario: precoController,
-                    estoque: estoqueController,
-                    tipo: tipoController.text);
+                  nome: nomeController.text.trimRight(),
+                  unitario:
+                      double.tryParse(unitarioController.text.trimRight()) ?? 0,
+                  estoque:
+                      double.tryParse(qtdeController.text.trimRight()) ?? 0,
+                  tipo: tipoController.text.trimRight(),
+                );
                 if (widget.id == null) {
                   await FirebaseFirestore.instance
                       .collection('produtos')

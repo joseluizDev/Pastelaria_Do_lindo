@@ -26,7 +26,6 @@ extension DateTimeExt on DateTime {
   }
 }
 
-//formatar valor em reais
 extension DoubleExt on double {
   String get formatted {
     final formatter = NumberFormat('#,##0.00', 'pt_BR');
