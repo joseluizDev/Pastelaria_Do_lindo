@@ -11,8 +11,10 @@ class AppWidget extends StatelessWidget {
       //  home: const SplashPage(),
       home: const SplashPage(),
       theme: ThemeData(
-        primarySwatch: Colors.red,
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red)
+            .copyWith(background: const Color.fromARGB(255, 236, 236, 236))
+            .copyWith(secondary: const Color.fromARGB(255, 243, 243, 243)),
       ),
     );
   }

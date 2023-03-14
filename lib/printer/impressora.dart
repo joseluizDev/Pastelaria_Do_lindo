@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:elgin/elgin.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_beep/flutter_beep.dart';
 import 'package:pastelaria/utils/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,7 +15,6 @@ Future<void> comproventePrinter(
   final int pagamento,
   final String numeroPedido,
 ) async {
-  await FlutterBeep.beep();
   final driver = ElginPrinter(type: ElginPrinterType.MINIPDV);
   final currentTime = DateTime.now();
   try {
