@@ -1,38 +1,74 @@
 {
   "project_info": {
-    "project_number": "584592116097",
-    "firebase_url": "https://comidas-tipicas-belem-default-rtdb.firebaseio.com",
-    "project_id": "comidas-tipicas-belem",
-    "storage_bucket": "comidas-tipicas-belem.appspot.com"
+    "project_number": "281322731389",
+    "firebase_url": "https://pastelaria-do-lindo-default-rtdb.firebaseio.com",
+    "project_id": "pastelaria-do-lindo",
+    "storage_bucket": "pastelaria-do-lindo.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:584592116097:android:be532c8a5f0b196a64c080",
+        "mobilesdk_app_id": "1:281322731389:android:bce99f34e2f46b0d93be14",
         "android_client_info": {
-          "package_name": "com.example.pastelaria"
+          "package_name": "com.example.painel_tv_pastelaria"
         }
       },
       "oauth_client": [
         {
-          "client_id": "584592116097-us6tbfh8humukl538eb3ra8lf5eqjvqj.apps.googleusercontent.com",
+          "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZdJ8HrCOgX7GcM7fRrGra-u87CaBKroc"
+          "current_key": "AIzaSyD2o0dItiOwIGcfpxjh1uPKQWwrpnQbmzg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "584592116097-us6tbfh8humukl538eb3ra8lf5eqjvqj.apps.googleusercontent.com",
+              "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "584592116097-5lli6q3uvr1e1pjstkota2r0asngbqfs.apps.googleusercontent.com",
+              "client_id": "281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pastelaria"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281322731389:android:89f744db07ba159b93be14",
+        "android_client_info": {
+          "package_name": "com.example.pastelaria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2o0dItiOwIGcfpxjh1uPKQWwrpnQbmzg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.example.pastelaria"
