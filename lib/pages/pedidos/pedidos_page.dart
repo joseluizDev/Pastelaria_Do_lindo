@@ -144,6 +144,11 @@ class _PedidosPageState extends State<PedidosPage> {
                                 Text(
                                   'Cliente: ${pedido.cliente.isNotEmpty ? pedido.cliente : 'Não definido'}',
                                 ),
+                                pedido.localEntrega.isNotEmpty
+                                    ? Text(
+                                        'Local da entrega: ${pedido.localEntrega.isNotEmpty ? pedido.localEntrega : 'Não definido'}',
+                                      )
+                                    : const SizedBox(),
                                 Text(
                                   'Mesa: ${pedido.mesa.isNotEmpty ? pedido.mesa : 'Não definida'}',
                                 ),

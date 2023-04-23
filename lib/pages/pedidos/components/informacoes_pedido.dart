@@ -8,6 +8,7 @@ class TituloComprovante extends StatelessWidget {
   final String data;
   final String hora;
   final TipoPagamento pagamento;
+  final String localEntrega;
 
   const TituloComprovante({
     super.key,
@@ -16,6 +17,7 @@ class TituloComprovante extends StatelessWidget {
     required this.data,
     required this.hora,
     required this.pagamento,
+    required this.localEntrega,
   });
 
   @override
@@ -34,6 +36,19 @@ class TituloComprovante extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            Row(
+              children: [
+                localEntrega.isNotEmpty
+                    ? Text(
+                        'Local da Entrega: $localEntrega',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : const SizedBox(),
+              ],
             ),
             Row(
               children: [

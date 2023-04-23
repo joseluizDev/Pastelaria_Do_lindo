@@ -4,6 +4,7 @@ import 'package:pastelaria/models/enum_pagamento.dart';
 
 class Pedidos {
   final String cliente;
+  final String localEntrega;
   final DateTime data;
   final String mesa;
   final List<ProdutoPedido> produtos;
@@ -12,16 +13,17 @@ class Pedidos {
   final String? funcionario;
   final TipoPedido? tipopedido;
   final TipoPagamento? tipopagamento;
-  final String? numeroPedido;
+  final int numeroPedido;
 
   Pedidos({
     required this.cliente,
+    required this.localEntrega,
     required this.data,
     required this.mesa,
     required this.produtos,
     required this.finalizado,
     required this.produtosAdicionais,
-    this.numeroPedido,
+    required this.numeroPedido,
     this.tipopagamento,
     this.tipopedido,
     this.funcionario,
@@ -38,7 +40,8 @@ class Pedidos {
     final mapFild = MapFields.load(json);
 
     return Pedidos(
-      cliente: mapFild.getString('cliente'),
+      cliente: mapFild.getString('cliente', ""),
+      localEntrega: mapFild.getString('localEntrega', ""),
       data: data.isUtc ? data.toLocal() : data,
       mesa: mapFild.getString('mesa'),
       produtosAdicionais: (json['produtosAdicionais'] as List<dynamic>)
@@ -61,13 +64,14 @@ class Pedidos {
           : TipoPagamento.values.firstWhere(
               (e) => e.toString() == mapFild.getStringNullable('tipopagamento'),
             ),
-      numeroPedido: mapFild.getStringNullable('numeroPedido'),
+      numeroPedido: mapFild.getInt('numeroPedido', 0),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'cliente': cliente,
+      'localEntrega': localEntrega,
       'data': data.toUtc().toIso8601String(),
       'mesa': mesa,
       'produtos': produtos.map((p) => p.toJson()).toList(),

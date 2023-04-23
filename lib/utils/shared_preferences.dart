@@ -13,16 +13,20 @@ Future<List<String>> lerisLogged() async {
   return [login ?? '', password ?? ''];
 }
 
-Future<int> contadorShared({bool condicao = false}) async {
-  final DateTime now = DateTime.now();
-  final String mes = now.month.toString();
-  final String dia = now.day.toString();
-  final String mesDia = mes + dia;
-
+Future<int> contadorShared() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final contador = prefs.getInt(mesDia) ?? 1;
-  if (condicao) {
-    prefs.setInt(mesDia, contador + 1);
+
+  int contador = prefs.getInt('contador') ?? 0;
+  int data = prefs.getInt('data') ?? 0;
+
+  if (data != DateTime.now().day) {
+    await prefs.setInt('contador', 1);
+    await prefs.setInt('data', DateTime.now().day);
+    return 1;
   }
+
+  contador++;
+  await prefs.setInt('contador', contador);
+
   return contador;
 }
