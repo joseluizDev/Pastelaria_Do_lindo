@@ -432,7 +432,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
             ? null
             : () async {
                 bool valuevolt = false;
-                int numeropedido = await contadorShared();
+                int numeropedido = await contadorShared(read: true);
                 return showDialog(
                   context: context,
                   builder: (BuildContext cxt) {
@@ -636,7 +636,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                           funcionario:
                                               LoginData().getUsuario().nome ??
                                                   'Não informado',
-                                          numeroPedido: numeropedido,
+                                          numeroPedido: await contadorShared(),
                                         );
                                         final data = pedido.toJson();
                                         await FirebaseFirestore.instance

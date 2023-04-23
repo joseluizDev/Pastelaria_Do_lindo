@@ -24,8 +24,27 @@ class TextFieldCustom extends StatelessWidget {
         onChanged: onChanged,
         controller: controller,
         decoration: InputDecoration(
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromARGB(255, 100, 100, 100),
+              style: BorderStyle.solid,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                15.0,
+              ),
+            ),
+          ),
           border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            borderSide: BorderSide(
+              color: Colors.black,
+              style: BorderStyle.solid,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                15.0,
+              ),
+            ),
           ),
           labelText: label,
         ),
