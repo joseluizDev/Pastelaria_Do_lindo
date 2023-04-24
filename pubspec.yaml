@@ -27,8 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  assets_audio_player: ^3.0.5
-  bluetooth_print: ^4.3.0
+  blue_print_pos: ^0.0.14
   cloud_firestore: ^4.5.2
   cupertino_icons: ^1.0.5
   elgin: ^0.1.9
@@ -38,6 +37,7 @@ dependencies:
   grouped_list: ^5.1.2
   intl: ^0.18.0
   map_fields: ^0.0.5
+  path_provider: ^2.0.14
   shared_preferences: ^2.0.15
 
 dev_dependencies:

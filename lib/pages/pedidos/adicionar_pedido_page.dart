@@ -9,7 +9,6 @@ import '../../models/enum_categoria.dart';
 import '../../models/enum_pagamento.dart';
 import '../../models/pedidos.dart';
 import '../../models/produtos.dart';
-import '../../printer/impressora.dart';
 import '../../utils/shared_preferences.dart';
 import 'components/confirmacao_pedido.dart';
 
@@ -437,6 +436,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                   context: context,
                   builder: (BuildContext cxt) {
                     return AlertDialog(
+                      surfaceTintColor: Colors.transparent,
                       contentPadding: const EdgeInsets.all(0),
                       insetPadding: const EdgeInsets.all(0),
                       actionsPadding: const EdgeInsets.all(0),
@@ -448,32 +448,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(),
-                          const Text(
-                            'Comprovante do pedido',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.print),
-                            onPressed: () async {
-                              await comproventePrinter(
-                                clienteController.text,
-                                produtosPedidoComprovante,
-                                produtosPedidoComprovante.fold<double>(
-                                    0, (total, p) => total + p.unitario),
-                                tipoPagamento.index,
-                                numeropedido.toString(),
-                              );
-                            },
-                          )
-                        ],
-                      ),
                       content: SizedBox(
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
@@ -488,186 +462,203 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                         ),
                       ),
                       actions: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        Column(
                           children: [
-                            ElevatedButton(
-                              onPressed: isloading
-                                  ? null
-                                  : () async {
-                                      final unique =
-                                          produtosPedido.toSet().toList();
-                                      final produtos = unique
-                                          .map(
-                                            (p) => ProdutoPedido(
-                                              nome: p.nome,
-                                              qtde: double.parse(produtosPedido
-                                                  .where((p2) => p2 == p)
-                                                  .length
-                                                  .toString()),
-                                              unitario: p.unitario,
-                                              tipo: p.tipo ?? '',
-                                            ),
-                                          )
-                                          .toList();
-                                      //tirar produtos do estoque
-                                      final produtosPedidoComprovanteFirebase =
-                                          produtosPedidoComprovante
-                                              .toSet()
-                                              .toList();
-
-                                      for (Produto i
-                                          in produtosPedidoComprovanteFirebase) {
-                                        await FirebaseFirestore.instance
-                                            .collection('produtos')
-                                            .where('nome', isEqualTo: i.nome)
-                                            .get()
-                                            .then(
-                                          (value) async {
-                                            for (var element in value.docs) {
-                                              final qtidade =
-                                                  produtosPedidoComprovante
-                                                      .where((element) =>
-                                                          element.nome ==
-                                                          i.nome)
-                                                      .length;
-                                              await FirebaseFirestore.instance
-                                                  .collection('produtos')
-                                                  .doc(element.id)
-                                                  .update(
-                                                {
-                                                  'estoque':
-                                                      FieldValue.increment(
-                                                          -qtidade),
-                                                },
-                                              );
-                                            }
-                                          },
-                                        );
-                                      }
-
-                                      if (widget.addnovo == false) {
-                                        final pedido = Pedidos(
-                                          mesa: mesaController.text,
-                                          localEntrega:
-                                              localEntregaController.text,
-                                          data: widget.pedido!.data,
-                                          cliente: clienteController.text,
-                                          tipopedido: tipoPedido,
-                                          tipopagamento: tipoPagamento,
-                                          produtos: produtos,
-                                          finalizado: 0,
-                                          produtosAdicionais: [],
-                                          funcionario:
-                                              LoginData().getUsuario().nome ??
-                                                  'Não informado',
-                                          numeroPedido:
-                                              widget.pedido!.numeroPedido,
-                                        );
-                                        final data = pedido.toJson();
-                                        FirebaseFirestore.instance
-                                            .collection('pedidos')
-                                            .doc(widget.pedidoData!.id)
-                                            .update(data)
-                                            .then(
-                                          (doc) {
-                                            valuevolt = true;
-                                            Navigator.of(context).pop();
-                                          },
-                                        );
-                                      } else if (widget.addnovo == true) {
-                                        final unir =
-                                            unirProdutos.toSet().toList();
-                                        final produtosadicionaislist = unir
-                                            .map((p) => ProdutoPedido(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: isloading
+                                      ? null
+                                      : () async {
+                                          final unique =
+                                              produtosPedido.toSet().toList();
+                                          final produtos = unique
+                                              .map(
+                                                (p) => ProdutoPedido(
                                                   nome: p.nome,
                                                   qtde: double.parse(
-                                                      unirProdutos
+                                                      produtosPedido
                                                           .where(
                                                               (p2) => p2 == p)
                                                           .length
                                                           .toString()),
                                                   unitario: p.unitario,
                                                   tipo: p.tipo ?? '',
-                                                ))
-                                            .toList();
-                                        final pedidoadicionais = Pedidos(
-                                          mesa: mesaController.text,
-                                          localEntrega:
-                                              localEntregaController.text,
-                                          data: DateTime.now(),
-                                          cliente: clienteController.text,
-                                          produtos: produtosadicionaislist,
-                                          tipopedido: tipoPedido,
-                                          tipopagamento: tipoPagamento,
-                                          finalizado: 0,
-                                          produtosAdicionais: produtos,
-                                          funcionario:
-                                              LoginData().getUsuario().nome ??
-                                                  'Não informado',
-                                          numeroPedido:
-                                              widget.pedido!.numeroPedido,
-                                        );
+                                                ),
+                                              )
+                                              .toList();
+                                          //tirar produtos do estoque
+                                          final produtosPedidoComprovanteFirebase =
+                                              produtosPedidoComprovante
+                                                  .toSet()
+                                                  .toList();
 
-                                        final data2 =
-                                            pedidoadicionais.toJsonadd();
-                                        FirebaseFirestore.instance
-                                            .collection('pedidos')
-                                            .doc(widget.pedidoData!.id)
-                                            .update(data2)
-                                            .then(
-                                          (doc) {
-                                            valuevolt = true;
-                                            Navigator.of(context).pop();
-                                          },
-                                        );
-                                      } else {
-                                        final pedido = Pedidos(
-                                          mesa: mesaController.text,
-                                          localEntrega:
-                                              localEntregaController.text,
-                                          data: DateTime.now(),
-                                          cliente: clienteController.text,
-                                          tipopedido: tipoPedido,
-                                          tipopagamento: tipoPagamento,
-                                          produtos: produtos,
-                                          finalizado: 0,
-                                          produtosAdicionais: [],
-                                          funcionario:
-                                              LoginData().getUsuario().nome ??
+                                          for (Produto i
+                                              in produtosPedidoComprovanteFirebase) {
+                                            await FirebaseFirestore.instance
+                                                .collection('produtos')
+                                                .where('nome',
+                                                    isEqualTo: i.nome)
+                                                .get()
+                                                .then(
+                                              (value) async {
+                                                for (var element
+                                                    in value.docs) {
+                                                  final qtidade =
+                                                      produtosPedidoComprovante
+                                                          .where((element) =>
+                                                              element.nome ==
+                                                              i.nome)
+                                                          .length;
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('produtos')
+                                                      .doc(element.id)
+                                                      .update(
+                                                    {
+                                                      'estoque':
+                                                          FieldValue.increment(
+                                                              -qtidade),
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                            );
+                                          }
+
+                                          if (widget.addnovo == false) {
+                                            final pedido = Pedidos(
+                                              mesa: mesaController.text,
+                                              localEntrega:
+                                                  localEntregaController.text,
+                                              data: widget.pedido!.data,
+                                              cliente: clienteController.text,
+                                              tipopedido: tipoPedido,
+                                              tipopagamento: tipoPagamento,
+                                              produtos: produtos,
+                                              finalizado: 0,
+                                              produtosAdicionais: [],
+                                              funcionario: LoginData()
+                                                      .getUsuario()
+                                                      .nome ??
                                                   'Não informado',
-                                          numeroPedido: await contadorShared(),
-                                        );
-                                        final data = pedido.toJson();
-                                        await FirebaseFirestore.instance
-                                            .collection('pedidos')
-                                            .add(data)
-                                            .then(
-                                          (doc) {
-                                            valuevolt = true;
-                                            Navigator.of(context).pop();
-                                          },
-                                        );
-                                      }
-                                    },
-                              child: const Text(
-                                "Salvar Pedido",
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 19, 255, 27),
-                                    fontSize: 20),
-                              ),
+                                              numeroPedido:
+                                                  widget.pedido!.numeroPedido,
+                                            );
+                                            final data = pedido.toJson();
+                                            FirebaseFirestore.instance
+                                                .collection('pedidos')
+                                                .doc(widget.pedidoData!.id)
+                                                .update(data)
+                                                .then(
+                                              (doc) {
+                                                valuevolt = true;
+                                                Navigator.of(context).pop();
+                                              },
+                                            );
+                                          } else if (widget.addnovo == true) {
+                                            final unir =
+                                                unirProdutos.toSet().toList();
+                                            final produtosadicionaislist = unir
+                                                .map((p) => ProdutoPedido(
+                                                      nome: p.nome,
+                                                      qtde: double.parse(
+                                                          unirProdutos
+                                                              .where((p2) =>
+                                                                  p2 == p)
+                                                              .length
+                                                              .toString()),
+                                                      unitario: p.unitario,
+                                                      tipo: p.tipo ?? '',
+                                                    ))
+                                                .toList();
+                                            final pedidoadicionais = Pedidos(
+                                              mesa: mesaController.text,
+                                              localEntrega:
+                                                  localEntregaController.text,
+                                              data: DateTime.now(),
+                                              cliente: clienteController.text,
+                                              produtos: produtosadicionaislist,
+                                              tipopedido: tipoPedido,
+                                              tipopagamento: tipoPagamento,
+                                              finalizado: 0,
+                                              produtosAdicionais: produtos,
+                                              funcionario: LoginData()
+                                                      .getUsuario()
+                                                      .nome ??
+                                                  'Não informado',
+                                              numeroPedido:
+                                                  widget.pedido!.numeroPedido,
+                                            );
+
+                                            final data2 =
+                                                pedidoadicionais.toJsonadd();
+                                            FirebaseFirestore.instance
+                                                .collection('pedidos')
+                                                .doc(widget.pedidoData!.id)
+                                                .update(data2)
+                                                .then(
+                                              (doc) {
+                                                valuevolt = true;
+                                                Navigator.of(context).pop();
+                                              },
+                                            );
+                                          } else {
+                                            final pedido = Pedidos(
+                                              mesa: mesaController.text,
+                                              localEntrega:
+                                                  localEntregaController.text,
+                                              data: DateTime.now(),
+                                              cliente: clienteController.text,
+                                              tipopedido: tipoPedido,
+                                              tipopagamento: tipoPagamento,
+                                              produtos: produtos,
+                                              finalizado: 0,
+                                              produtosAdicionais: [],
+                                              funcionario: LoginData()
+                                                      .getUsuario()
+                                                      .nome ??
+                                                  'Não informado',
+                                              numeroPedido:
+                                                  await contadorShared(),
+                                            );
+                                            final data = pedido.toJson();
+                                            await FirebaseFirestore.instance
+                                                .collection('pedidos')
+                                                .add(data)
+                                                .then(
+                                              (doc) {
+                                                valuevolt = true;
+                                                Navigator.of(context).pop();
+                                              },
+                                            );
+                                          }
+                                        },
+                                  child: const Text(
+                                    "Salvar Pedido",
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 19, 255, 27),
+                                        fontSize: 20),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Cancelar',
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 255, 120, 110),
+                                        fontSize: 20),
+                                  ),
+                                ),
+                              ],
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text(
-                                'Cancelar',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 120, 110),
-                                    fontSize: 20),
-                              ),
-                            ),
+                            SizedBox(
+                              height: 15,
+                            )
                           ],
                         ),
                       ],
