@@ -137,37 +137,21 @@ class _PedidosPageState extends State<PedidosPage> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-<<<<<<< Updated upstream
-                                Text((pedido.total + pedido.totalAdicionais)
-                                    .formatted),
-=======
                                 Text((pedido.total).formatted),
->>>>>>> Stashed changes
                                 Text(
                                     'Numero do pedido: ${pedido.numeroPedido}'),
                                 Text(
                                   'Cliente: ${pedido.cliente.isNotEmpty ? pedido.cliente : 'Não definido'}',
                                 ),
-<<<<<<< Updated upstream
-                                pedido.localEntrega.isNotEmpty
-                                    ? Text(
-                                        'Local da entrega: ${pedido.localEntrega.isNotEmpty ? pedido.localEntrega : 'Não definido'}',
-                                      )
-                                    : const SizedBox(),
-=======
->>>>>>> Stashed changes
                                 Text(
                                   'Mesa: ${pedido.mesa.isNotEmpty ? pedido.mesa : 'Não definida'}',
                                 ),
                                 Text(
                                     'Pedido:${pedido.tipopedido?.index == 0 ? 'Não definido' : pedido.tipopedido?.index == 1 ? 'Delivery' : 'Local'}'),
-<<<<<<< Updated upstream
-=======
                                 pedido.localDaEntrga.isEmpty
                                     ? const SizedBox()
                                     : Text(
                                         'Local da entrega: ${pedido.localDaEntrga}'),
->>>>>>> Stashed changes
                                 Text(
                                     'Pagamento:${pedido.tipopagamento?.index == 0 ? 'Não definido' : pedido.tipopagamento?.index == 1 ? 'Dinheiro' : pedido.tipopagamento?.index == 2 ? 'Cartão' : 'Pix'}'),
                                 Text(
@@ -194,15 +178,10 @@ class _PedidosPageState extends State<PedidosPage> {
                           context: context,
                           builder: (ctx) {
                             return AlertDialog(
-<<<<<<< Updated upstream
-                              title: Text(
-                                  'Pedido $index \n${(pedido.total + pedido.totalAdicionais).formatted}'),
-=======
                               title: Builder(builder: (context) {
                                 return Text(
                                     'Pedido $index \n${(pedido.total).formatted}');
                               }),
->>>>>>> Stashed changes
                               content: SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.5,
@@ -217,14 +196,6 @@ class _PedidosPageState extends State<PedidosPage> {
                                           return ListTile(
                                             title: Text(
                                                 pedido.produtos[index].nome),
-<<<<<<< Updated upstream
-                                            subtitle: Text(pedido
-                                                .produtos[index]
-                                                .unitario
-                                                .formatted),
-                                            trailing: Text(
-                                                'X ${pedido.produtos[index].qtde.toInt()}'),
-=======
                                             trailing: Text(
                                                 'X ${pedido.produtos[index].qtde.toInt()}'),
                                             subtitle: Column(
@@ -260,7 +231,6 @@ class _PedidosPageState extends State<PedidosPage> {
                                                   ),
                                               ],
                                             ),
->>>>>>> Stashed changes
                                           );
                                         },
                                       ),

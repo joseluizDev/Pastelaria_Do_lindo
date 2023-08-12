@@ -29,10 +29,6 @@ extension DateTimeExt on DateTime {
 extension DoubleExt on double {
   String get formatted {
     final formatter = NumberFormat('#,##0.00', 'pt_BR');
-<<<<<<< Updated upstream
-    return 'R\$ ${formatter.format(this)}';
-=======
     return 'R\$${formatter.format(this)}';
->>>>>>> Stashed changes
   }
 }

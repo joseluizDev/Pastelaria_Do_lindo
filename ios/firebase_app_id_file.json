@@ -1,13 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-<<<<<<< Updated upstream
-  "GOOGLE_APP_ID": "1:281322731389:ios:2ea53d2c56a21c8893be14",
-  "FIREBASE_PROJECT_ID": "pastelaria-do-lindo",
-  "GCM_SENDER_ID": "281322731389"
-=======
   "GOOGLE_APP_ID": "1:584592116097:ios:88c8d69b62a5080664c080",
   "FIREBASE_PROJECT_ID": "comidas-tipicas-belem",
   "GCM_SENDER_ID": "584592116097"
->>>>>>> Stashed changes
 }

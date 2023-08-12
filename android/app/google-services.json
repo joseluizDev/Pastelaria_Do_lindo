@@ -8,45 +8,6 @@
   "client": [
     {
       "client_info": {
-<<<<<<< Updated upstream
-        "mobilesdk_app_id": "1:281322731389:android:bce99f34e2f46b0d93be14",
-        "android_client_info": {
-          "package_name": "com.example.painel_tv_pastelaria"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD2o0dItiOwIGcfpxjh1uPKQWwrpnQbmzg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "281322731389-os2o0691vkeskhqsqv2ic7p2u3ojcbcs.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.pastelaria"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-=======
->>>>>>> Stashed changes
         "mobilesdk_app_id": "1:281322731389:android:89f744db07ba159b93be14",
         "android_client_info": {
           "package_name": "com.example.pastelaria"
@@ -83,8 +44,4 @@
     }
   ],
   "configuration_version": "1"
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes

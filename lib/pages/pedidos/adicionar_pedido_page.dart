@@ -10,10 +10,7 @@ import '../../models/enum_pagamento.dart';
 import '../../models/pedidos.dart';
 import '../../models/produtos.dart';
 import '../../utils/shared_preferences.dart';
-<<<<<<< Updated upstream
-=======
 import 'components/adicionar_produto_dialog.dart';
->>>>>>> Stashed changes
 import 'components/confirmacao_pedido.dart';
 
 // ignore: must_be_immutable
@@ -38,13 +35,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
   List<Produto> unirProdutos = [];
   final mesaController = TextEditingController();
   final clienteController = TextEditingController();
-<<<<<<< Updated upstream
-  final localEntregaController = TextEditingController();
-
-  bool isloading = false;
-  @override
-  void initState() {
-=======
   final localDaEntrega = TextEditingController();
   bool isloading = false;
   @override
@@ -52,7 +42,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
     try {} catch (e) {
       print(e);
     }
->>>>>>> Stashed changes
     _init();
     if (widget.unir == true) {
       unir();
@@ -85,23 +74,13 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
     if (widget.addnovo == true) {
       mesaController.text = widget.pedido!.mesa;
       clienteController.text = widget.pedido!.cliente;
-<<<<<<< Updated upstream
-      localEntregaController.text = widget.pedido!.localEntrega;
-=======
       localDaEntrega.text = widget.pedido!.localDaEntrga;
->>>>>>> Stashed changes
       tipoPedido = widget.pedido!.tipopedido!;
     } else if (widget.pedido != null) {
       mesaController.text = widget.pedido!.mesa;
       clienteController.text = widget.pedido!.cliente;
-<<<<<<< Updated upstream
-      localEntregaController.text = widget.pedido!.localEntrega;
-      tipoPedido = widget.pedido!.tipopedido!;
-
-=======
       localDaEntrega.text = widget.pedido!.localDaEntrga;
       tipoPedido = widget.pedido!.tipopedido!;
->>>>>>> Stashed changes
       for (var produto in widget.pedido!.produtos) {
         for (var i = 1; i <= (produto.qtde.toInt()); i++) {
           produtosPedido.add(Produto(
@@ -134,22 +113,12 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
               label: 'Cliente',
               controller: clienteController,
             ),
-<<<<<<< Updated upstream
-            Visibility(
-              visible: tipoPedido == TipoPedido.delivery,
-              child: TextFieldCustom(
-                label: 'Local da Entrega',
-                controller: localEntregaController,
-              ),
-            ),
-=======
             tipoPedido.index == 1
                 ? TextFieldCustom(
                     label: 'Local da Entrega',
                     controller: localDaEntrega,
                   )
                 : const SizedBox(),
->>>>>>> Stashed changes
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -159,11 +128,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                     child: Container(
                       height: 60,
                       decoration: BoxDecoration(
-<<<<<<< Updated upstream
-                        color: const Color.fromARGB(255, 255, 179, 189),
-=======
                         color: const Color.fromARGB(255, 255, 65, 90),
->>>>>>> Stashed changes
                         border: Border.all(
                           color: Colors.black,
                           width: 3,
@@ -187,11 +152,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                           ),
                           underline: Container(
                             height: 2,
-<<<<<<< Updated upstream
-                            color: Color.fromARGB(255, 255, 179, 189),
-=======
                             color: Colors.red,
->>>>>>> Stashed changes
                           ),
                           onChanged: (TipoPedido? newValue) {
                             setState(() {
@@ -226,11 +187,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                     child: Container(
                       height: 60,
                       decoration: BoxDecoration(
-<<<<<<< Updated upstream
-                        color: const Color.fromARGB(255, 255, 179, 189),
-=======
                         color: const Color.fromARGB(255, 255, 65, 90),
->>>>>>> Stashed changes
                         border: Border.all(
                           color: Colors.black,
                           width: 3,
@@ -253,11 +210,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                           ),
                           underline: Container(
                             height: 2,
-<<<<<<< Updated upstream
-                            color: Color.fromARGB(255, 255, 179, 189),
-=======
                             color: Colors.red,
->>>>>>> Stashed changes
                           ),
                           onChanged: (TipoPagamento? newValue) {
                             setState(() {
@@ -314,41 +267,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                     ),
                   );
                 }
-<<<<<<< Updated upstream
-                final produtos = snapshot.data?.docs ?? [];
-                return GroupedListView<dynamic, String>(
-                  shrinkWrap: true,
-                  elements: produtos,
-                  groupBy: (element) => element.data()['tipo'],
-                  groupComparator: (value1, value2) => value2.compareTo(value1),
-                  itemComparator: (item1, item2) =>
-                      item1['tipo'].compareTo(item2['tipo']),
-                  order: GroupedListOrder.DESC,
-                  useStickyGroupSeparators: true,
-                  groupSeparatorBuilder: (String value) => Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 13),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      color: Color.fromARGB(255, 255, 179, 189),
-                      elevation: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Text(
-                          value.toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                  itemBuilder: (c, element) {
-                    final produtoData = element;
-                    final produto = Produto.fromJson(produtoData.data());
-=======
                 final data = snapshot.data?.docs ?? [];
                 List<Produto> produtos = data.map((e) {
                   final produto = Produto.fromJson(e.data());
@@ -379,18 +297,14 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                   },
                   itemBuilder: (c, element) {
                     final produto = element as Produto;
->>>>>>> Stashed changes
 
                     final quantidade = produtosPedido
                         .where((p) =>
                             p.nome == produto.nome && p.tipo == produto.tipo)
                         .length;
-<<<<<<< Updated upstream
-=======
                     if (produto.tipo == 'add') {
                       return const SizedBox();
                     }
->>>>>>> Stashed changes
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Card(
@@ -448,14 +362,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                 aspectRatio: 1,
                                 child: FloatingActionButton(
                                   onPressed: quantidade < produto.estoque
-<<<<<<< Updated upstream
-                                      ? () {
-                                          setState(() {
-                                            produtosPedido.add(produto);
-                                            produtosPedidoComprovante
-                                                .add(produto);
-                                          });
-=======
                                       ? () async {
                                           print(produto.tipo.toString());
                                           if (produto.tipo
@@ -518,7 +424,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                                   .add(produto);
                                             });
                                           }
->>>>>>> Stashed changes
                                         }
                                       : null,
                                   child: const Icon(Icons.add),
@@ -583,56 +488,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
             ? null
             : () async {
                 bool valuevolt = false;
-<<<<<<< Updated upstream
-                int numeropedido = await contadorShared(read: true);
-                return showDialog(
-                  context: context,
-                  builder: (BuildContext cxt) {
-                    return AlertDialog(
-                      surfaceTintColor: Colors.transparent,
-                      contentPadding: const EdgeInsets.all(0),
-                      insetPadding: const EdgeInsets.all(0),
-                      actionsPadding: const EdgeInsets.all(0),
-                      titlePadding: const EdgeInsets.all(0),
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      buttonPadding: const EdgeInsets.all(0),
-                      iconPadding: const EdgeInsets.all(0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                      content: SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: ConfirmacaoPedido(
-                          cliente: clienteController.text,
-                          localEntrega: localEntregaController.text,
-                          valorTotal: produtosPedido.fold<double>(
-                              0, (total, p) => total + p.unitario),
-                          produtos: produtosPedido,
-                          pagamento: tipoPagamento,
-                          numeroPedido: numeropedido,
-                        ),
-                      ),
-                      actions: <Widget>[
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: isloading
-                                      ? null
-                                      : () async {
-                                          final unique =
-                                              produtosPedido.toSet().toList();
-                                          final produtos = unique
-                                              .map(
-                                                (p) => ProdutoPedido(
-                                                  nome: p.nome,
-                                                  qtde: double.parse(
-                                                      produtosPedido
-=======
 
                 int numeropedido = await countDay();
 
@@ -767,191 +622,12 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                                   nome: p.nome,
                                                   qtde: double.parse(
                                                       unirProdutos
->>>>>>> Stashed changes
                                                           .where(
                                                               (p2) => p2 == p)
                                                           .length
                                                           .toString()),
                                                   unitario: p.unitario,
                                                   tipo: p.tipo ?? '',
-<<<<<<< Updated upstream
-                                                ),
-                                              )
-                                              .toList();
-                                          //tirar produtos do estoque
-                                          final produtosPedidoComprovanteFirebase =
-                                              produtosPedidoComprovante
-                                                  .toSet()
-                                                  .toList();
-
-                                          for (Produto i
-                                              in produtosPedidoComprovanteFirebase) {
-                                            await FirebaseFirestore.instance
-                                                .collection('produtos')
-                                                .where('nome',
-                                                    isEqualTo: i.nome)
-                                                .get()
-                                                .then(
-                                              (value) async {
-                                                for (var element
-                                                    in value.docs) {
-                                                  final qtidade =
-                                                      produtosPedidoComprovante
-                                                          .where((element) =>
-                                                              element.nome ==
-                                                              i.nome)
-                                                          .length;
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('produtos')
-                                                      .doc(element.id)
-                                                      .update(
-                                                    {
-                                                      'estoque':
-                                                          FieldValue.increment(
-                                                              -qtidade),
-                                                    },
-                                                  );
-                                                }
-                                              },
-                                            );
-                                          }
-
-                                          if (widget.addnovo == false) {
-                                            final pedido = Pedidos(
-                                              mesa: mesaController.text,
-                                              localEntrega:
-                                                  localEntregaController.text,
-                                              data: widget.pedido!.data,
-                                              cliente: clienteController.text,
-                                              tipopedido: tipoPedido,
-                                              tipopagamento: tipoPagamento,
-                                              produtos: produtos,
-                                              finalizado: 0,
-                                              produtosAdicionais: [],
-                                              funcionario: LoginData()
-                                                      .getUsuario()
-                                                      .nome ??
-                                                  'Não informado',
-                                              numeroPedido:
-                                                  widget.pedido!.numeroPedido,
-                                            );
-                                            final data = pedido.toJson();
-                                            FirebaseFirestore.instance
-                                                .collection('pedidos')
-                                                .doc(widget.pedidoData!.id)
-                                                .update(data)
-                                                .then(
-                                              (doc) {
-                                                valuevolt = true;
-                                                Navigator.of(context).pop();
-                                              },
-                                            );
-                                          } else if (widget.addnovo == true) {
-                                            final unir =
-                                                unirProdutos.toSet().toList();
-                                            final produtosadicionaislist = unir
-                                                .map((p) => ProdutoPedido(
-                                                      nome: p.nome,
-                                                      qtde: double.parse(
-                                                          unirProdutos
-                                                              .where((p2) =>
-                                                                  p2 == p)
-                                                              .length
-                                                              .toString()),
-                                                      unitario: p.unitario,
-                                                      tipo: p.tipo ?? '',
-                                                    ))
-                                                .toList();
-                                            final pedidoadicionais = Pedidos(
-                                              mesa: mesaController.text,
-                                              localEntrega:
-                                                  localEntregaController.text,
-                                              data: DateTime.now(),
-                                              cliente: clienteController.text,
-                                              produtos: produtosadicionaislist,
-                                              tipopedido: tipoPedido,
-                                              tipopagamento: tipoPagamento,
-                                              finalizado: 0,
-                                              produtosAdicionais: produtos,
-                                              funcionario: LoginData()
-                                                      .getUsuario()
-                                                      .nome ??
-                                                  'Não informado',
-                                              numeroPedido:
-                                                  widget.pedido!.numeroPedido,
-                                            );
-
-                                            final data2 =
-                                                pedidoadicionais.toJsonadd();
-                                            FirebaseFirestore.instance
-                                                .collection('pedidos')
-                                                .doc(widget.pedidoData!.id)
-                                                .update(data2)
-                                                .then(
-                                              (doc) {
-                                                valuevolt = true;
-                                                Navigator.of(context).pop();
-                                              },
-                                            );
-                                          } else {
-                                            final pedido = Pedidos(
-                                              mesa: mesaController.text,
-                                              localEntrega:
-                                                  localEntregaController.text,
-                                              data: DateTime.now(),
-                                              cliente: clienteController.text,
-                                              tipopedido: tipoPedido,
-                                              tipopagamento: tipoPagamento,
-                                              produtos: produtos,
-                                              finalizado: 0,
-                                              produtosAdicionais: [],
-                                              funcionario: LoginData()
-                                                      .getUsuario()
-                                                      .nome ??
-                                                  'Não informado',
-                                              numeroPedido:
-                                                  await contadorShared(),
-                                            );
-                                            final data = pedido.toJson();
-                                            await FirebaseFirestore.instance
-                                                .collection('pedidos')
-                                                .add(data)
-                                                .then(
-                                              (doc) {
-                                                valuevolt = true;
-                                                Navigator.of(context).pop();
-                                              },
-                                            );
-                                          }
-                                        },
-                                  child: const Text(
-                                    "Salvar Pedido",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 19, 255, 27),
-                                        fontSize: 20),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    'Cancelar',
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 255, 120, 110),
-                                        fontSize: 20),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15,
-                            )
-                          ],
-                        ),
-=======
                                                   adicionais: p.adicionais,
                                                 ))
                                             .toList();
@@ -1033,7 +709,6 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                             ),
                           ],
                         )
->>>>>>> Stashed changes
                       ],
                     );
                   },
