@@ -24,6 +24,7 @@ class TextFieldCustom extends StatelessWidget {
         onChanged: onChanged,
         controller: controller,
         decoration: InputDecoration(
+<<<<<<< Updated upstream
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Color.fromARGB(255, 100, 100, 100),
@@ -45,6 +46,10 @@ class TextFieldCustom extends StatelessWidget {
                 15.0,
               ),
             ),
+=======
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+>>>>>>> Stashed changes
           ),
           labelText: label,
         ),

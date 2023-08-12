@@ -13,6 +13,7 @@ Future<List<String>> lerisLogged() async {
   return [login ?? '', password ?? ''];
 }
 
+<<<<<<< Updated upstream
 Future<int> contadorShared({bool read = false}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -30,4 +31,24 @@ Future<int> contadorShared({bool read = false}) async {
   await prefs.setInt('contador', contador);
 
   return contador;
+=======
+Future<int> countDay({bool save = false}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  int count = prefs.getInt('count') ?? 0;
+  int day = prefs.getInt('day') ?? 0;
+
+  if (day != DateTime.now().day && day != 0) {
+    prefs.setInt('day', DateTime.now().day);
+    prefs.setInt('count', 0);
+    count = 0;
+  }
+
+  count++;
+
+  if (save) {
+    prefs.setInt('count', count);
+  }
+
+  return count;
+>>>>>>> Stashed changes
 }

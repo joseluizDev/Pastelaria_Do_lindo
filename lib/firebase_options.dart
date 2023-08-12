@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
+<<<<<<< Updated upstream
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
 /// Example:
@@ -14,6 +15,8 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
+=======
+>>>>>>> Stashed changes
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -72,7 +75,12 @@ class DefaultFirebaseOptions {
     projectId: 'pastelaria-do-lindo',
     databaseURL: 'https://pastelaria-do-lindo-default-rtdb.firebaseio.com',
     storageBucket: 'pastelaria-do-lindo.appspot.com',
+<<<<<<< Updated upstream
     iosClientId: '281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com',
+=======
+    iosClientId:
+        '281322731389-3aeaiue0820lt3gjso7kv4eqn0sgrj98.apps.googleusercontent.com',
+>>>>>>> Stashed changes
     iosBundleId: 'com.example.pastelaria',
   );
 }

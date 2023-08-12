@@ -15,6 +15,7 @@ class AppWidget extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red)
             .copyWith(background: const Color.fromARGB(255, 236, 236, 236))
             .copyWith(secondary: const Color.fromARGB(255, 243, 243, 243)),
+<<<<<<< Updated upstream
         scaffoldBackgroundColor: Color.fromARGB(255, 255, 255, 255),
         dialogTheme: DialogTheme(
           backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -23,6 +24,8 @@ class AppWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
+=======
+>>>>>>> Stashed changes
       ),
     );
   }
