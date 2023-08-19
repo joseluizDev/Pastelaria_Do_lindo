@@ -368,7 +368,9 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                                               .toString()
                                               .toUpperCase()
                                               .contains("GUARA")) {
-                                            List<Produto> produtodd =
+                                            List<Produto>? produtodd;
+
+                                            produtodd =
                                                 await showDialog(
                                               barrierDismissible: false,
                                               context: context,
@@ -460,11 +462,31 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Text(
-                      'Total: ${produtosPedido.fold<double>(0, (total, p) => total + p.unitario).formatted}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Builder(builder: (context) {
+                      double valorProdutos = produtosPedido.fold<double>(
+                              0, (total, p) => total + p.unitario) +
+                          produtosPedido.fold<double>(
+                              0,
+                              (total, p) =>
+                                  total +
+                                  (p.adicionais?.fold<double?>(
+                                          0,
+                                          (total, p) =>
+                                              total ?? 0 + p.unitario) ??
+                                      0.0));
+                      double valorAdicionais = produtosPedido
+                          .map((e) => e.adicionais?.fold<double>(
+                              0, (total, p) => total + p.unitario))
+                          .fold<double>(0, (total, p) => total + (p ?? 0));
+
+                      double valorTotal = valorProdutos + valorAdicionais;
+                      return Text(
+                        'Total: ${valorTotal.formatted}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
                     ),
                   ],
                 ),
@@ -493,7 +515,27 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
 
                 showDialog(
                   context: context,
+                  
                   builder: (BuildContext cxt) {
+
+
+                    double valorProdutos = produtosPedido.fold<double>(
+                            0, (total, p) => total + p.unitario) +
+                        produtosPedido.fold<double>(
+                            0,
+                            (total, p) =>
+                                total +
+                                (p.adicionais?.fold<double?>(
+                                        0,
+                                        (total, p) =>
+                                            total ?? 0 + p.unitario) ??
+                                    0.0));
+                    double valorAdicionais = produtosPedido
+                        .map((e) => e.adicionais
+                            ?.fold<double>(0, (total, p) => total + p.unitario))
+                        .fold<double>(0, (total, p) => total + (p ?? 0));
+
+                    double valorTotal = valorProdutos + valorAdicionais;
                     return AlertDialog(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -508,17 +550,7 @@ class _AdicionarPedidoPageState extends State<AdicionarPedidoPage> {
                           child: ConfirmacaoPedido(
                             cliente: clienteController.text,
                             localDaEntrega: localDaEntrega.text,
-                            valorTotal: produtosPedido.fold<double>(
-                                    0, (total, p) => total + p.unitario) +
-                                produtosPedido.fold<double>(
-                                    0,
-                                    (total, p) =>
-                                        total +
-                                        (p.adicionais?.fold<double?>(
-                                                0,
-                                                (total, p) =>
-                                                    total ?? 0 + p.unitario) ??
-                                            0.0)),
+                            valorTotal: valorTotal,
                             produtos: produtosPedido,
                             pagamento: tipoPagamento,
                             numeroPedido: numeropedido.toString(),

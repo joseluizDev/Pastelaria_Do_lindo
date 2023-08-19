@@ -33,14 +33,4 @@ class Produto {
       'adicionais': adicionais?.map((e) => e.toJson()).toList(),
     };
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is Produto && other.nome == nome && other.unitario == unitario;
-  }
-
-  @override
-  int get hashCode => nome.hashCode ^ unitario.hashCode;
 }

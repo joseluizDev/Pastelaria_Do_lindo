@@ -57,7 +57,7 @@ class _AdicionarProdutoDialogState extends State<AdicionarProdutoDialog> {
               children: [
                 ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(null);
                     },
                     child: const Text("Cancelar")),
                 ElevatedButton(

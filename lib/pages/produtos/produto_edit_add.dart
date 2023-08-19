@@ -65,6 +65,7 @@ class _ProdutoEditAddState extends State<ProdutoEditAdd> {
             },
           ),
           TextFieldCustom(
+            
             label: 'Estoque',
             controller: qtdeController,
             keyboardType: TextInputType.number,
@@ -89,9 +90,7 @@ class _ProdutoEditAddState extends State<ProdutoEditAdd> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: precoController == 0
-            ? null
-            : () async {
+        onPressed: () async {
                 final Produto produto = Produto(
                   nome: nomeController.text.trimRight(),
                   unitario:

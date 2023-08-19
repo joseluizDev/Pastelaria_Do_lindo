@@ -138,12 +138,32 @@ class _ConfirmacaoPedidoState extends State<ConfirmacaoPedido> {
     }
 
     bytes += ticket.hr();
-    List<Produto> produtos = widget.produtos.toSet().toList();
-    for (var i = 0; i < produtos.length; i++) {
-      final nome = widget.produtos[i].nome;
-      final qtd =
-          widget.produtos.where((element) => element.nome == nome).length;
-      final valor = widget.produtos[i].unitario;
+
+
+    // List<Produto> produtosUnicos = widget.produtos.toSet().toList();
+    List<Produto> produtosUnicos = [];
+    for (var p = 0; p < widget.produtos.length; p++) {
+      if (produtosUnicos == null) {
+        produtosUnicos = [];
+      }
+      if (produtosUnicos
+          .where((element) =>
+              element.nome == widget.produtos[p].nome &&
+              element.adicionais.hashCode ==
+                  widget.produtos[p].adicionais.hashCode)
+          .isEmpty) {
+        produtosUnicos.add(widget.produtos[p]);
+      }
+    }
+
+    for (var produtoUnico in produtosUnicos) {
+      final nome = produtoUnico.nome;
+      final qtd = widget.produtos
+          .where((element) =>
+              element.nome == produtoUnico.nome &&
+              element.adicionais.hashCode == produtoUnico.adicionais.hashCode)
+          .length;
+      final valor = produtoUnico.unitario;
       bytes += ticket.row([
         PosColumn(
           text: qtd.toString() + 'x',
@@ -160,21 +180,24 @@ class _ConfirmacaoPedidoState extends State<ConfirmacaoPedido> {
           ),
         ),
         PosColumn(
-          text: valor.formatted,
+          text: (qtd * valor).formatted,
           width: 3,
           styles: const PosStyles(
             align: PosAlign.right,
           ),
         ),
       ]);
-      if (widget.produtos[i].adicionais != null) {
-        //widget.produtos[i].adicionais!.length
-        for (var j = 0; j < widget.produtos[i].adicionais!.length; j++) {
-          final nomeAdicional = widget.produtos[i].adicionais![j].nome;
-          final qtdAdicional = widget.produtos[i].adicionais!
-              .where((element) => element.nome == nomeAdicional)
-              .length;
-          final valorAdicional = widget.produtos[i].adicionais![j].unitario;
+
+      if (produtoUnico.adicionais != null) {
+        Map<String, int> qtdAdicionais = {};
+        for (var adicional in produtoUnico.adicionais!) {
+          qtdAdicionais.update(adicional.nome, (value) => value + 1,
+              ifAbsent: () => 1);
+        }
+        for (var adicional in produtoUnico.adicionais!.toSet().toList()) {
+          final nomeAdicional = adicional.nome;
+          final qtdAdicional = qtdAdicionais[nomeAdicional] ?? 0;
+          final valorAdicional = adicional.unitario;
           bytes += ticket.row([
             PosColumn(
               text: qtdAdicional.toString() + 'x',
@@ -201,6 +224,8 @@ class _ConfirmacaoPedidoState extends State<ConfirmacaoPedido> {
         }
       }
     }
+
+
     bytes += ticket.hr();
 
     bytes += ticket.row([
@@ -247,10 +272,11 @@ class _ConfirmacaoPedidoState extends State<ConfirmacaoPedido> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SingleChildScrollView(
-          child: Container(
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.black87, width: 2),
@@ -303,17 +329,33 @@ class _ConfirmacaoPedidoState extends State<ConfirmacaoPedido> {
                     child: DividerCustom(),
                   ),
                   Builder(builder: (context) {
-                    // adicionar so um produto sem repetir
-                    final produtosUnicos = widget.produtos.toSet().toList();
-
+                    List<Produto> produtosWidget = widget.produtos;
+                    List<Produto> produtosUnicos = [];
+    
+                    for (var p = 0; p < produtosWidget.length; p++) {
+                      if (produtosUnicos == null) {
+                        produtosUnicos = [];
+                      }
+                      if (produtosUnicos
+                          .where((element) =>
+                              element.nome == produtosWidget[p].nome &&
+                              element.adicionais.hashCode ==
+                                  produtosWidget[p].adicionais.hashCode)
+                          .isEmpty) {
+                        produtosUnicos.add(produtosWidget[p]);
+                      }
+                    }
                     return ListView.builder(
                       itemCount: produtosUnicos.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (_, index) {
                         final produto = produtosUnicos[index];
-                        final quantidade = widget.produtos
-                            .where((element) => element.nome == produto.nome)
+                        final quantidade = produtosWidget
+                            .where((element) =>
+                                element.nome == produto.nome &&
+                                element.adicionais.hashCode ==
+                                    produto.adicionais.hashCode)
                             .length;
                         return Column(
                           mainAxisSize: MainAxisSize.min,
@@ -454,82 +496,84 @@ class _ConfirmacaoPedidoState extends State<ConfirmacaoPedido> {
               ),
             ),
           ),
-        ),
-        StreamBuilder<bool>(
-          stream: printerManager.isScanningStream,
-          initialData: false,
-          builder: (c, snapshot) {
-            if (snapshot.data!) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (_devices.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      comproventePrint(
-                        widget.cliente,
-                        widget.produtos,
-                        widget.valorTotal,
-                        widget.pagamento,
-                        widget.numeroPedido,
-                        widget.localDaEntrega,
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: const Text('Imprimir PDV'),
-                    ),
-                  ),
-                ),
-              );
-            }
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: _devices.length,
-              itemBuilder: (BuildContext context, int index) {
-                if (_devices[index].name != 'KP-1025') {
-                  return const SizedBox();
-                }
-                return InkWell(
-                  onTap: () async {
-                    _testPrint(_devices[index]);
-                  },
-                  child: Card(
-                    child: Container(
-                      height: 60,
-                      padding: const EdgeInsets.only(left: 10),
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: <Widget>[
-                          const Icon(Icons.print),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(_devices[index].name ?? ''),
-                              Text(_devices[index].address!),
-                              Text(
-                                'Clique para imprimir',
-                                style: TextStyle(color: Colors.grey[700]),
-                              ),
-                            ],
-                          )
-                        ],
+          StreamBuilder<bool>(
+            stream: printerManager.isScanningStream,
+    
+            initialData: false,
+            builder: (c, snapshot) {
+              if (snapshot.data!) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (_devices.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        comproventePrint(
+                          widget.cliente,
+                          widget.produtos,
+                          widget.valorTotal,
+                          widget.pagamento,
+                          widget.numeroPedido,
+                          widget.localDaEntrega,
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: const Text('Imprimir PDV'),
                       ),
                     ),
                   ),
                 );
-              },
-            );
-          },
-        ),
-      ],
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _devices.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if (_devices[index].name != 'KP-1025') {
+                    return const SizedBox();
+                  }
+                  return InkWell(
+                    onTap: () async {
+                      _testPrint(_devices[index]);
+                    },
+                    child: Card(
+                      child: Container(
+                        height: 60,
+                        padding: const EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: <Widget>[
+                            const Icon(Icons.print),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(_devices[index].name ?? ''),
+                                Text(_devices[index].address!),
+                                Text(
+                                  'Clique para imprimir',
+                                  style: TextStyle(color: Colors.grey[700]),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
